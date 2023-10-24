@@ -1,0 +1,16 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "migrate:dev": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.5.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.5.0",
+    "tsconfig": "workspace:*",
+    "typescript": "^5.2.2"
+  }
+}

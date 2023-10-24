@@ -1,20 +1,8 @@
 {
-  "name": "task-manager-doc-server",
-  "module": "index.ts",
+  "name": "task-manager-server",
+  "private": true,
   "type": "module",
-  "scripts": {
-    "start": "bun run index.ts"
-  },
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@hocuspocus/server": "^2.6.1",
-    "@hocuspocus/transformer": "^2.6.1",
-    "y-protocols": "^1.0.6",
-    "yjs": "^13.6.8"
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }
