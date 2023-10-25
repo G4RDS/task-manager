@@ -7,8 +7,9 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "database": "workspace:*",
     "@hocuspocus/server": "^2.7.1",
+    "@hocuspocus/transformer": "^2.7.1",
+    "database": "workspace:*",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.8"
   },
