@@ -11,8 +11,8 @@ datasource db {
 model Note {
   id          String   @id @default(uuid())
   title       String
-  titleBlob   Bytes
-  contentBlob Bytes
+  titleBlob   Bytes?
+  contentBlob Bytes?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

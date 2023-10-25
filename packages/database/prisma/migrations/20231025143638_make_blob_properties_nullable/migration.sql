@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Note" ALTER COLUMN "contentBlob" DROP NOT NULL,
+ALTER COLUMN "titleBlob" DROP NOT NULL;
