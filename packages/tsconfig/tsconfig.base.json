@@ -13,6 +13,8 @@
     "skipLibCheck": true,
     "composite": true,
     "downlevelIteration": true,
-    "allowSyntheticDefaultImports": true
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   }
 }
