@@ -3,6 +3,7 @@ import { TiptapTransformer } from '@hocuspocus/transformer';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
+import { head, put } from '@vercel/blob';
 import { prisma } from 'database';
 import * as Y from 'yjs';
 
@@ -54,7 +55,7 @@ const server = new Hocuspocus({
 
     if (type === 'title') {
       const note = await prisma.note.findUnique({
-        select: { titleBlob: true, title: true },
+        select: { title: true, titleBlobUrl: true },
         where: { id },
       });
 
@@ -62,8 +63,10 @@ const server = new Hocuspocus({
         throw new Error('Note not found');
       }
 
-      if (note.titleBlob) {
-        Y.applyUpdate(data.document, note.titleBlob);
+      if (note.titleBlobUrl) {
+        const res = await fetch(note.titleBlobUrl);
+        const buf = await res.arrayBuffer();
+        Y.applyUpdate(data.document, new Uint8Array(buf));
       } else if (note.title) {
         return getYdocFromTitleText(note.title);
       }
@@ -71,7 +74,7 @@ const server = new Hocuspocus({
       return data.document;
     } else {
       const note = await prisma.note.findUnique({
-        select: { contentBlob: true },
+        select: { contentBlobUrl: true },
         where: { id },
       });
 
@@ -79,8 +82,10 @@ const server = new Hocuspocus({
         throw new Error('Note not found');
       }
 
-      if (note.contentBlob) {
-        Y.applyUpdate(data.document, note.contentBlob);
+      if (note.contentBlobUrl) {
+        const res = await fetch(note.contentBlobUrl);
+        const buf = await res.arrayBuffer();
+        Y.applyUpdate(data.document, new Uint8Array(buf));
       }
 
       return data.document;
@@ -94,18 +99,34 @@ const server = new Hocuspocus({
     }
 
     if (type === 'title') {
+      const res = await put(
+        `${id}/title`,
+        Y.encodeStateAsUpdate(data.document).buffer as ArrayBuffer,
+        {
+          access: 'public',
+          addRandomSuffix: false,
+        },
+      );
       await prisma.note.update({
         where: { id },
         data: {
-          titleBlob: Buffer.from(Y.encodeStateAsUpdate(data.document)),
           title: getTitleTextFromYdoc(data.document),
+          titleBlobUrl: res.url,
         },
       });
     } else {
+      const res = await put(
+        `${id}/content`,
+        Y.encodeStateAsUpdate(data.document).buffer as ArrayBuffer,
+        {
+          access: 'public',
+          addRandomSuffix: false,
+        },
+      );
       await prisma.note.update({
         where: { id },
         data: {
-          contentBlob: Buffer.from(Y.encodeStateAsUpdate(data.document)),
+          contentBlobUrl: res.url,
         },
       });
     }

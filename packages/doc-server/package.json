@@ -9,6 +9,7 @@
   "dependencies": {
     "@hocuspocus/server": "^2.7.1",
     "@hocuspocus/transformer": "^2.7.1",
+    "@vercel/blob": "^0.14.1",
     "database": "workspace:*",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.8"
