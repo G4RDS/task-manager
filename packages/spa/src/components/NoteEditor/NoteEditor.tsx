@@ -76,7 +76,6 @@ export const NoteEditor = ({ className }: { className?: string }) => {
           flex: '0 0 auto',
           position: 'relative',
           w: '100%',
-          pt: 32,
           fontSize: '40px',
           fontWeight: 'bold',
           lineHeight: '1.2',
