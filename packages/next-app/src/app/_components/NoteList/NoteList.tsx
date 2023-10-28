@@ -1,9 +1,13 @@
-import useSWR from 'swr';
-import { css, cx } from '../../../styled-system/css';
-import { requestGetNotes } from '../../api/notes';
+import { prisma } from 'database';
+import { css, cx } from '../../../../styled-system/css';
 
-export const NoteList = ({ className }: { className?: string }) => {
-  const { data: notes } = useSWR('/notes', requestGetNotes);
+export const NoteList = async ({ className }: { className?: string }) => {
+  const notes = await prisma.note.findMany({
+    select: {
+      id: true,
+      title: true,
+    },
+  });
 
   return (
     <ul
@@ -14,7 +18,7 @@ export const NoteList = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      {notes?.data.map((note) => (
+      {notes.map((note) => (
         <li
           className={css({
             w: '100%',

@@ -1,0 +1,23 @@
+{
+  "extends": "tsconfig/tsconfig.base",
+  "include": ["src", "styled-system", ".next/types/**/*.ts"],
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "incremental": true
+  },
+  // This is not needed, but `next dev` always insert it.
+  "exclude": ["node_modules"]
+}

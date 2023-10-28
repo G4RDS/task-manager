@@ -1,9 +1,9 @@
-import { css } from '../styled-system/css';
-import { flex } from '../styled-system/patterns';
-import { NoteEditor } from './components/NoteEditor/NoteEditor';
-import { NoteList } from './components/NoteList/NoteList';
+import { css } from '../../styled-system/css';
+import { flex } from '../../styled-system/patterns';
+import { NoteEditor } from './_components/NoteEditor/NoteEditor';
+import { NoteList } from './_components/NoteList/NoteList';
 
-export const App = () => {
+export default function Page() {
   return (
     <div
       className={flex({
@@ -27,4 +27,4 @@ export const App = () => {
       </div>
     </div>
   );
-};
+}

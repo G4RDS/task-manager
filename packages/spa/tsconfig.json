@@ -1,5 +1,0 @@
-{
-  "extends": "tsconfig/tsconfig.react",
-  "include": ["src", "styled-system"],
-  "references": [{ "path": "./tsconfig.vite.json" }]
-}

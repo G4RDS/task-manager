@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bunx --bun vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "npm run tsc:ci && npm run eslint:ci && npm run prettier:ci",
     "tsc:ci": "tsc --noEmit",
     "eslint:ci": "eslint src/**/*.ts{,x}",
@@ -37,6 +37,7 @@
     "yjs": "^13.6.8"
   },
   "devDependencies": {
+    "database": "workspace:*",
     "tsconfig": "workspace:*",
     "@pandacss/dev": "^0.15.5",
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
