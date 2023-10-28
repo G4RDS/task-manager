@@ -20,8 +20,9 @@ const titleTransformer = TiptapTransformer.extensions(titleExtensions);
 const getTitleTextFromYdoc = (doc: Y.Doc): string => {
   const obj = titleTransformer.fromYdoc(doc);
   try {
-    return obj.default.content[0].content[0].text;
+    return obj?.default?.content?.[0]?.content?.[0]?.text;
   } catch (e) {
+    // TODO: Why TypeError cannot be caught?
     console.error(e);
   }
   return '';

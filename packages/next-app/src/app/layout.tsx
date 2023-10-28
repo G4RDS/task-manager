@@ -1,8 +1,8 @@
-import { ReactElement } from 'react';
+import { ReactNode } from 'react';
 import { flex } from '../../styled-system/patterns';
 import './index.css';
 
-export default function RootLayout({ children }: { children: ReactElement }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja-JP">
       <body>
