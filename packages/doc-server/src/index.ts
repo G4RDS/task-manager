@@ -3,7 +3,7 @@ import { TiptapTransformer } from '@hocuspocus/transformer';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
-import { head, put } from '@vercel/blob';
+import { put } from '@vercel/blob';
 import { prisma } from 'database';
 import * as Y from 'yjs';
 

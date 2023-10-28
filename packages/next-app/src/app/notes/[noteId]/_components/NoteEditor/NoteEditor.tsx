@@ -29,8 +29,13 @@ export const NoteEditor = ({
   useEffect(() => {
     const title = createNoteTitleDocConnection(noteId);
     const content = createNoteContentDocConnection(noteId);
-    setTitleDocExtensions(title.extensions);
-    setContentDocExtensions(content.extensions);
+
+    title.provider.on('connect', () => {
+      setTitleDocExtensions(title.extensions);
+    });
+    content.provider.on('connect', () => {
+      setContentDocExtensions(content.extensions);
+    });
 
     return () => {
       title.provider.destroy();
@@ -39,7 +44,65 @@ export const NoteEditor = ({
   }, [noteId]);
 
   if (!titleDocExtensions || !contentDocExtensions) {
-    return null;
+    return (
+      <div
+        className={cx(
+          flex({
+            flexDir: 'column',
+          }),
+          className,
+        )}
+      >
+        <div
+          className={css({
+            flex: '0 0 auto',
+            w: '10ch',
+            h: '40px',
+            my: '4px',
+            backgroundColor: 'gray.50',
+            borderRadius: 6,
+          })}
+        />
+        <div
+          className={css({
+            flex: '1',
+            pt: 2,
+          })}
+        >
+          <div
+            className={css({
+              my: '1px',
+
+              py: '3px',
+            })}
+          >
+            <div
+              className={css({
+                width: '100%',
+                height: '24px',
+                backgroundColor: 'gray.50',
+                borderRadius: 6,
+              })}
+            />
+          </div>
+          <div
+            className={css({
+              my: '1px',
+              py: '3px',
+            })}
+          >
+            <div
+              className={css({
+                width: '30%',
+                height: '24px',
+                backgroundColor: 'gray.50',
+                borderRadius: 6,
+              })}
+            />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

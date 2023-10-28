@@ -12,7 +12,6 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 
 export const createNoteTitleDocConnection = (noteId: string) => {
-  console.log('noteId: ', noteId);
   const provider = new HocuspocusProvider({
     url: 'ws://localhost:8008',
     name: `${noteId}/title`,
