@@ -1,14 +1,5 @@
 {
-  "extends": "tsconfig/tsconfig.base",
-  "compilerOptions": {
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-  },
+  "extends": "tsconfig/tsconfig.react",
   "include": ["src", "styled-system"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.vite.json" }]
 }
