@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getNotesQuerySchema, getNotesResponseSchema } from 'api-server-type';
 import { prisma } from 'database';
 
+// This API endpoint is not used but I remain it here for creating a new API endpoint
 export const getNotes: FastifyPluginAsync = async (fastify) => {
   fastify.get<{
     Reply: z.infer<typeof getNotesResponseSchema>;

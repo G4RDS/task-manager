@@ -13,8 +13,8 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import { BubbleMenu, Editor, EditorContent, useEditor } from '@tiptap/react';
-import { css, cx } from '../../../../styled-system/css';
-import { flex } from '../../../../styled-system/patterns';
+import { css, cx } from '../../../../../../styled-system/css';
+import { flex } from '../../../../../../styled-system/patterns';
 
 const titleProvider = new HocuspocusProvider({
   url: 'ws://localhost:8008',
