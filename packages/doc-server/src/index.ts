@@ -46,6 +46,12 @@ const getYdocFromTitleText = (text: string): Y.Doc => {
 
 const server = new Hocuspocus({
   port: 8008,
+  onConnect: async (data) => {
+    console.log('connect:', data.documentName);
+  },
+  onDisconnect: async (data) => {
+    console.log('disconnect:', data.documentName);
+  },
   onLoadDocument: async (data): Promise<Y.Doc> => {
     const [id, type] = data.documentName.split('/');
 

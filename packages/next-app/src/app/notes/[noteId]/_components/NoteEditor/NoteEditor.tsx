@@ -1,70 +1,71 @@
 'use client';
 
-import { HocuspocusProvider } from '@hocuspocus/provider';
-import Bold from '@tiptap/extension-bold';
-import BulletList from '@tiptap/extension-bullet-list';
-import Collaboration from '@tiptap/extension-collaboration';
-import Document from '@tiptap/extension-document';
-import HardBreak from '@tiptap/extension-hard-break';
-import Heading from '@tiptap/extension-heading';
-import ListItem from '@tiptap/extension-list-item';
-import OrderedList from '@tiptap/extension-ordered-list';
-import Paragraph from '@tiptap/extension-paragraph';
-import Placeholder from '@tiptap/extension-placeholder';
-import Text from '@tiptap/extension-text';
-import { BubbleMenu, Editor, EditorContent, useEditor } from '@tiptap/react';
+import { useEffect, useState } from 'react';
+import {
+  BubbleMenu,
+  Editor,
+  EditorContent,
+  Extensions,
+  useEditor,
+} from '@tiptap/react';
 import { css, cx } from '../../../../../../styled-system/css';
 import { flex } from '../../../../../../styled-system/patterns';
+import {
+  createNoteContentDocConnection,
+  createNoteTitleDocConnection,
+} from '../../../../../utils/tiptap';
 
-const titleProvider = new HocuspocusProvider({
-  url: 'ws://localhost:8008',
-  name: '6b8c0248-15ff-428c-8a95-400b75731b19/title',
-});
+export const NoteEditor = ({
+  noteId,
+  className,
+}: {
+  noteId: string;
+  className?: string;
+}) => {
+  const [titleDocExtensions, setTitleDocExtensions] = useState<Extensions>();
+  const [contentDocExtensions, setContentDocExtensions] =
+    useState<Extensions>();
 
-const contentProvider = new HocuspocusProvider({
-  url: 'ws://localhost:8008',
-  name: '6b8c0248-15ff-428c-8a95-400b75731b19/content',
-});
+  useEffect(() => {
+    const title = createNoteTitleDocConnection(noteId);
+    const content = createNoteContentDocConnection(noteId);
+    setTitleDocExtensions(title.extensions);
+    setContentDocExtensions(content.extensions);
 
-const titleExtensions = [
-  Document.extend({
-    content: 'block',
-  }),
-  Text,
-  Paragraph,
-  Placeholder.configure({
-    placeholder: '無題',
-    showOnlyCurrent: false,
-  }),
-  Collaboration.configure({
-    document: titleProvider.document,
-  }),
-];
+    return () => {
+      title.provider.destroy();
+      content.provider.destroy();
+    };
+  }, [noteId]);
 
-const contentExtensions = [
-  Document,
-  Text,
-  Heading.configure({
-    levels: [1, 2, 3],
-  }),
-  BulletList,
-  HardBreak,
-  OrderedList,
-  Bold,
-  Paragraph,
-  ListItem,
-  Collaboration.configure({
-    document: contentProvider.document,
-  }),
-];
+  if (!titleDocExtensions || !contentDocExtensions) {
+    return null;
+  }
 
-export const NoteEditor = ({ className }: { className?: string }) => {
+  return (
+    <NoteEditorInner
+      titleDocExtensions={titleDocExtensions}
+      contentDocExtensions={contentDocExtensions}
+      className={className}
+    />
+  );
+};
+
+const NoteEditorInner = ({
+  titleDocExtensions,
+  contentDocExtensions,
+  className,
+}: {
+  titleDocExtensions: Extensions;
+  contentDocExtensions: Extensions;
+  className?: string;
+}) => {
   const titleEditor = useEditor({
-    extensions: titleExtensions,
+    extensions: titleDocExtensions,
   });
 
   const contentEditor = useEditor({
-    extensions: contentExtensions,
+    extensions: contentDocExtensions,
   });
 
   if (!titleEditor || !contentEditor) {
