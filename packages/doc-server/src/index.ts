@@ -106,14 +106,11 @@ const server = new Hocuspocus({
     }
 
     if (type === 'title') {
-      const res = await put(
-        `${id}/title`,
-        Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer,
-        {
-          access: 'public',
-          addRandomSuffix: false,
-        },
-      );
+      const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
+      const res = await put(`${id}/title`, buf, {
+        access: 'public',
+        cacheControlMaxAge: 0,
+      });
       await prisma.note.update({
         where: { id },
         data: {
@@ -122,14 +119,11 @@ const server = new Hocuspocus({
         },
       });
     } else {
-      const res = await put(
-        `${id}/content`,
-        Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer,
-        {
-          access: 'public',
-          addRandomSuffix: false,
-        },
-      );
+      const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
+      const res = await put(`${id}/content`, buf, {
+        access: 'public',
+        cacheControlMaxAge: 0,
+      });
       await prisma.note.update({
         where: { id },
         data: {
