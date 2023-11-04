@@ -8,12 +8,12 @@ import {
   Extensions,
   useEditor,
 } from '@tiptap/react';
-import { css, cx } from '../../../../../../styled-system/css';
-import { flex } from '../../../../../../styled-system/patterns';
+import { css, cx } from '../../../../../../../styled-system/css';
+import { flex } from '../../../../../../../styled-system/patterns';
 import {
   createNoteContentDocConnection,
   createNoteTitleDocConnection,
-} from '../../../../../utils/tiptap';
+} from '../../../../../../utils/tiptap';
 
 export const NoteEditor = ({
   noteId,

@@ -1,10 +1,8 @@
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 import { prisma } from 'database';
-import { css } from '../../styled-system/css';
-import { flex } from '../../styled-system/patterns';
-import { PrimaryButton } from '../components/PrimaryButton';
-import { NoteList } from './_components/NoteList/NoteList';
+import { css } from '../../../styled-system/css';
+import { flex } from '../../../styled-system/patterns';
+import { PrimaryButton } from '../../components/PrimaryButton';
 
 export default function Page() {
   const onSubmitCreateNote = async () => {
@@ -43,11 +41,7 @@ export default function Page() {
           <PrimaryButton type="submit">作成</PrimaryButton>
         </form>
       </div>
-      <div className={css({ mt: 4 })}>
-        <Suspense fallback="loading...">
-          <NoteList />
-        </Suspense>
-      </div>
+      <div className={css({ mt: 4 })}></div>
     </section>
   );
 }

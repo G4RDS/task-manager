@@ -1,4 +1,4 @@
-import { css } from '../../../../styled-system/css';
+import { css } from '../../../../../styled-system/css';
 import { NoteEditor } from './_components/NoteEditor/NoteEditor';
 
 export default function Page({ params }: { params: { noteId: string } }) {
