@@ -44,8 +44,8 @@ export const CreateNoteForm = () => {
         borderColor: 'gray.200',
         borderRadius: '14px',
         bgColor: '#fff',
-        boxShadow: 'md',
         color: 'gray.700',
+        animation: 'boxShadowAppearMd 150ms token(easings.easeOut) forwards',
       })}
       key={state}
     >
