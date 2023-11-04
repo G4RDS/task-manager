@@ -73,7 +73,7 @@ const server = new Hocuspocus({
       if (note.titleBlobUrl) {
         const res = await fetch(note.titleBlobUrl);
         const buf = await res.arrayBuffer();
-        Y.applyUpdate(data.document, new Uint8Array(buf));
+        Y.applyUpdateV2(data.document, new Uint8Array(buf));
       } else if (note.title) {
         return getYdocFromTitleText(note.title);
       }
@@ -92,7 +92,7 @@ const server = new Hocuspocus({
       if (note.contentBlobUrl) {
         const res = await fetch(note.contentBlobUrl);
         const buf = await res.arrayBuffer();
-        Y.applyUpdate(data.document, new Uint8Array(buf));
+        Y.applyUpdateV2(data.document, new Uint8Array(buf));
       }
 
       return data.document;
@@ -108,7 +108,7 @@ const server = new Hocuspocus({
     if (type === 'title') {
       const res = await put(
         `${id}/title`,
-        Y.encodeStateAsUpdate(data.document).buffer as ArrayBuffer,
+        Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer,
         {
           access: 'public',
           addRandomSuffix: false,
@@ -124,7 +124,7 @@ const server = new Hocuspocus({
     } else {
       const res = await put(
         `${id}/content`,
-        Y.encodeStateAsUpdate(data.document).buffer as ArrayBuffer,
+        Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer,
         {
           access: 'public',
           addRandomSuffix: false,
