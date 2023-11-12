@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
-import { css } from '../../../../../styled-system/css';
-import { createNoteAndRedirect } from './action';
+import { css } from '../../../../../../../styled-system/css';
+import { createTask } from './action';
 
-export const CreateNoteForm = () => {
+interface Props {
+  noteId: string;
+}
+export const CreateTaskForm = ({ noteId }: Props) => {
   const [isActive, setIsActive] = useState(false);
-  const [state, formAction] = useFormState(createNoteAndRedirect, 1);
+  const [state, formAction] = useFormState(createTask, 1);
 
   if (!isActive) {
     return (
@@ -28,7 +31,7 @@ export const CreateNoteForm = () => {
           textAlign: 'left',
         })}
       >
-        Create a note...
+        Create a task...
       </button>
     );
   }
@@ -49,6 +52,7 @@ export const CreateNoteForm = () => {
       })}
       key={state}
     >
+      <input type="hidden" name="noteId" value={noteId} />
       <input
         type="text"
         name="title"

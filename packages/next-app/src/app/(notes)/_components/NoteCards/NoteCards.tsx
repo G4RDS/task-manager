@@ -28,8 +28,7 @@ export const NoteCards = async () => {
             className={css({
               display: 'block',
               p: 3,
-              border: '1px solid',
-              borderColor: 'gray.200',
+              border: '1px solid token(colors.gray.200)',
               borderRadius: '14px',
               bgColor: '#fff',
               color: 'gray.700',

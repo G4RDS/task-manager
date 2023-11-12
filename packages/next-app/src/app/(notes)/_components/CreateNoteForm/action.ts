@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { prisma } from 'database';
 
@@ -18,6 +19,8 @@ export const createNoteAndRedirect = async (
       title,
     },
   });
+
+  revalidatePath('/');
   redirect(`/notes/${note.id}`);
 
   return ++state;
