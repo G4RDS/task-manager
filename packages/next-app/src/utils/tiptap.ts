@@ -15,7 +15,7 @@ import { mergeAttributes } from '@tiptap/react';
 export const createNoteTitleDocConnection = (noteId: string) => {
   const provider = new HocuspocusProvider({
     url: 'ws://localhost:8008',
-    name: `${noteId}/title`,
+    name: `note/${noteId}/title`,
   });
 
   const extensions = [
@@ -42,7 +42,80 @@ export const createNoteTitleDocConnection = (noteId: string) => {
 export const createNoteContentDocConnection = (noteId: string) => {
   const provider = new HocuspocusProvider({
     url: 'ws://localhost:8008',
-    name: `${noteId}/content`,
+    name: `note/${noteId}/content`,
+  });
+
+  const extensions = [
+    Document,
+    Text,
+    Heading.extend({
+      parseHTML() {
+        return this.options.levels.map((level: Level) => ({
+          tag: `h${level + 1}`,
+          attrs: { level },
+        }));
+      },
+      renderHTML({ node, HTMLAttributes }) {
+        const hasLevel = this.options.levels.includes(node.attrs.level);
+        const level = hasLevel ? node.attrs.level : this.options.levels[0];
+
+        return [
+          `h${level + 1}`,
+          mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+          0,
+        ] as const;
+      },
+    }).configure({
+      levels: [1, 2, 3],
+    }),
+    BulletList,
+    HardBreak,
+    OrderedList,
+    Bold,
+    Paragraph,
+    ListItem,
+    Collaboration.configure({
+      document: provider.document,
+    }),
+  ];
+
+  return {
+    provider,
+    extensions,
+  } as const;
+};
+
+export const createTaskTitleDocConnection = (taskId: string) => {
+  const provider = new HocuspocusProvider({
+    url: 'ws://localhost:8008',
+    name: `task/${taskId}/title`,
+  });
+
+  const extensions = [
+    Document.extend({
+      content: 'block',
+    }),
+    Text,
+    Paragraph,
+    Placeholder.configure({
+      placeholder: '無題',
+      showOnlyCurrent: false,
+    }),
+    Collaboration.configure({
+      document: provider.document,
+    }),
+  ];
+
+  return {
+    provider,
+    extensions,
+  } as const;
+};
+
+export const createTaskContentDocConnection = (taskId: string) => {
+  const provider = new HocuspocusProvider({
+    url: 'ws://localhost:8008',
+    name: `task/${taskId}/content`,
   });
 
   const extensions = [

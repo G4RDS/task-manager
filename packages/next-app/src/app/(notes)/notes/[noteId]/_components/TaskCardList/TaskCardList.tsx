@@ -26,7 +26,7 @@ export const TaskCardList = async ({ noteId }: Props) => {
       {tasks.map((task) => (
         <li key={task.id}>
           <Link
-            href={`/`}
+            href={`/tasks/${task.id}`}
             className={css({
               display: 'block',
               p: 3,
