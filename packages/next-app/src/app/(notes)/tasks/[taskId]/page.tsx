@@ -1,4 +1,5 @@
 import { css } from '../../../../../styled-system/css';
+import { ParentNoteLink } from './_components/ParentNoteLink';
 import { TaskEditor } from './_components/TaskEditor/TaskEditor';
 
 export default function Page({ params }: { params: { taskId: string } }) {
@@ -10,7 +11,13 @@ export default function Page({ params }: { params: { taskId: string } }) {
         p: '48px',
       })}
     >
-      <TaskEditor taskId={params.taskId} />
+      <ParentNoteLink taskId={params.taskId} />
+      <TaskEditor
+        taskId={params.taskId}
+        className={css({
+          mt: 8,
+        })}
+      />
     </div>
   );
 }
