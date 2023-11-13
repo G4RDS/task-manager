@@ -28,10 +28,14 @@ export const NoteCards = async () => {
             className={css({
               display: 'block',
               p: 3,
-              border: '1px solid token(colors.gray.200)',
+              border: '1px solid token(colors.gray.100)',
               borderRadius: '14px',
               bgColor: '#fff',
               color: 'gray.700',
+              transition: '150ms token(easings.easeOut)',
+              _hover: {
+                boxShadow: 'sm',
+              },
             })}
           >
             <p
