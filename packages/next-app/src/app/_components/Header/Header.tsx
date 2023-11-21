@@ -10,6 +10,7 @@ export const Header = ({ titleEl, actionsEl }: Props) => {
   return (
     <header
       className={flex({
+        flex: '0 0 auto',
         alignItems: 'center',
         justifyContent: 'space-between',
         h: 16,

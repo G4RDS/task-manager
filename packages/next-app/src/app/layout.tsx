@@ -18,7 +18,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           className={grid({
             gridTemplateColumns: '256px 1fr',
             gap: 0,
-            alignItems: 'stretch',
             h: '100vh',
             p: '12px 12px 12px 0',
             bgColor: 'gray.100',
@@ -48,7 +47,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </nav>
           </section>
           <div
-            className={css({
+            className={flex({
+              flexDir: 'column',
+              overflow: 'hidden',
+              minH: 0,
               borderRadius: '20px',
               bgColor: 'white',
               boxShadow: 'md',

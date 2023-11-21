@@ -10,6 +10,7 @@ export const MainContents = ({ className, children }: Props) => {
     <main
       className={cx(
         css({
+          flex: '1',
           overflowY: 'auto',
         }),
         className,
