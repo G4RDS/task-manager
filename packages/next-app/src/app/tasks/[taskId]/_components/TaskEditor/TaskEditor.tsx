@@ -8,12 +8,12 @@ import {
   Extensions,
   useEditor,
 } from '@tiptap/react';
-import { css, cx } from '../../../../../../../styled-system/css';
-import { flex } from '../../../../../../../styled-system/patterns';
+import { css, cx } from '../../../../../../styled-system/css';
+import { flex } from '../../../../../../styled-system/patterns';
 import {
   createTaskContentDocConnection,
   createTaskTitleDocConnection,
-} from '../../../../../../utils/tiptap';
+} from '../../../../../utils/tiptap';
 
 export const TaskEditor = ({
   taskId,

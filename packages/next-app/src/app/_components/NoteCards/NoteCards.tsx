@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { prisma } from 'database';
-import { css } from '../../../../../styled-system/css';
-import { flex } from '../../../../../styled-system/patterns';
+import { css } from '../../../../styled-system/css';
+import { flex } from '../../../../styled-system/patterns';
 
 export const NoteCards = async () => {
   const notes = await prisma.note.findMany({

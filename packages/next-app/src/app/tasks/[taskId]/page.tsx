@@ -1,4 +1,4 @@
-import { css } from '../../../../../styled-system/css';
+import { css } from '../../../../styled-system/css';
 import { ParentNoteLink } from './_components/ParentNoteLink';
 import { TaskEditor } from './_components/TaskEditor/TaskEditor';
 

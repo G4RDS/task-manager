@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
-import { css } from '../../../../../../../styled-system/css';
+import { css } from '../../../../../../styled-system/css';
 import { createTask } from './action';
 
 interface Props {
