@@ -49,6 +49,7 @@ export const NoteEditor = ({
         className={cx(
           flex({
             flexDir: 'column',
+            minH: '100vh',
           }),
           className,
         )}
