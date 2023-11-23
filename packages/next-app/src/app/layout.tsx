@@ -9,6 +9,10 @@ import './index.css';
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja-JP">
+      <head>
+        <link rel="preconnect" href="https://rsms.me/" />
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+      </head>
       <body
         className={css({
           overflowY: 'hidden',

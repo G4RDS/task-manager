@@ -6,9 +6,14 @@ const globalCss = defineGlobalStyles({
     color: 'token(colors.text.base)',
     fontSize: '16px',
     lineHeight: '1.5em',
-    fontFamily:
-      'ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Sans GB", メイリオ, Meiryo, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"',
     WebkitFontSmoothing: 'auto',
+    fontFamily:
+      '"Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Sans GB", メイリオ, Meiryo, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"',
+    fontFeatureSettings: '"liga" 1, "calt" 1',
+    '@supports (font-variation-settings: normal)': {
+      fontFamily:
+        '"Inter var", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Sans GB", メイリオ, Meiryo, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"',
+    },
   },
   a: {
     color: '#0284c7',
