@@ -1,10 +1,12 @@
 import { Hocuspocus } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
+import { generateHTML } from '@tiptap/html';
 import { put } from '@vercel/blob';
 import { prisma } from 'database';
+import {
+  noteTitleBaseExtensions,
+  taskContentBaseExtensions,
+} from 'tiptap-shared';
 import * as Y from 'yjs';
 import { z } from 'zod';
 
@@ -20,15 +22,8 @@ const convertFromDocumentName = (documentName: string) => {
   return { docType, id, contentType } as const;
 };
 
-const titleExtensions = [
-  Document.extend({
-    content: 'block',
-  }),
-  Text,
-  Paragraph,
-];
-
-const titleTransformer = TiptapTransformer.extensions(titleExtensions);
+// TODO: noteとtaskで分ける
+const titleTransformer = TiptapTransformer.extensions(noteTitleBaseExtensions);
 
 const getTitleTextFromYdoc = (doc: Y.Doc): string => {
   const obj = titleTransformer.fromYdoc(doc);
@@ -157,11 +152,18 @@ const server = new Hocuspocus({
         cacheControlMaxAge: 0,
       });
 
+      const prosemirrorJson = TiptapTransformer.fromYdoc(data.document);
+      const html = generateHTML(
+        prosemirrorJson.default,
+        taskContentBaseExtensions,
+      );
+
       if (docType === 'note') {
         await prisma.note.update({
           where: { id },
           data: {
             contentBlobUrl: res.url,
+            contentHtml: html,
           },
         });
       } else {
@@ -169,6 +171,7 @@ const server = new Hocuspocus({
           where: { id },
           data: {
             contentBlobUrl: res.url,
+            contentHtml: html,
           },
         });
       }

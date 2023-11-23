@@ -8,9 +8,9 @@ export const NoteIcon = ({ className }: Props) => {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2.25"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>

@@ -1,0 +1,27 @@
+{
+  "name": "tiptap-shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@tiptap/extension-bold": "^2.1.12",
+    "@tiptap/extension-bullet-list": "^2.1.12",
+    "@tiptap/extension-collaboration": "^2.1.12",
+    "@tiptap/extension-document": "^2.1.12",
+    "@tiptap/extension-hard-break": "^2.1.12",
+    "@tiptap/extension-heading": "^2.1.12",
+    "@tiptap/extension-list-item": "^2.1.12",
+    "@tiptap/extension-ordered-list": "^2.1.12",
+    "@tiptap/extension-paragraph": "^2.1.12",
+    "@tiptap/extension-text": "^2.1.12",
+    "@tiptap/pm": "^2.1.12",
+    "@tiptap/react": "^2.1.12"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "typescript": "^5.2.2"
+  }
+}

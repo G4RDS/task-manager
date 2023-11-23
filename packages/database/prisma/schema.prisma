@@ -12,6 +12,7 @@ model Note {
   id             String   @id @default(uuid())
   title          String
   titleBlobUrl   String?
+  contentHtml    String?
   contentBlobUrl String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -29,6 +30,7 @@ model Task {
   id             String     @id @default(uuid())
   title          String
   titleBlobUrl   String?
+  contentHtml    String?
   contentBlobUrl String?
   status         TaskStatus @default(TODO)
   createdAt      DateTime   @default(now())
