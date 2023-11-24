@@ -5,7 +5,7 @@ const globalCss = defineGlobalStyles({
     height: '100%',
     color: 'token(colors.text.base)',
     fontSize: '16px',
-    lineHeight: '1.5',
+    lineHeight: '1',
     WebkitFontSmoothing: 'auto',
     fontFamily:
       '"Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Hiragino Sans GB", メイリオ, Meiryo, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"',

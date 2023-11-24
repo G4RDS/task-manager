@@ -22,6 +22,7 @@ export const NavLink = ({
       aria-current={pathname === href ? 'page' : undefined}
       className={flex({
         alignItems: 'center',
+        h: 8,
         py: 1,
         border: '1px solid transparent',
         borderRadius: '10px',

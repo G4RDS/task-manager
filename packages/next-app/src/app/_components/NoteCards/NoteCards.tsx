@@ -6,7 +6,7 @@ import { flex } from '../../../../styled-system/patterns';
 export const NoteCards = async () => {
   const notes = await prisma.note.findMany({
     select: {
-      id: true,
+      noteId: true,
       title: true,
     },
     orderBy: {
@@ -22,9 +22,9 @@ export const NoteCards = async () => {
       })}
     >
       {notes.map((note) => (
-        <li key={note.id}>
+        <li key={note.noteId}>
           <Link
-            href={`/notes/${note.id}`}
+            href={`/notes/${note.noteId}`}
             className={css({
               display: 'block',
               p: 3,

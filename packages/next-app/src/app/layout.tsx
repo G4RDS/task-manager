@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { css } from '../../styled-system/css';
 import { flex, grid } from '../../styled-system/patterns';
+import { DashboardIcon } from '../components/icons/DashboardIcon';
 import { NoteIcon } from '../components/icons/NoteIcon';
 import { TaskIcon } from '../components/icons/TaskIcon';
 import { NavLink } from './_components/NavLink';
@@ -46,6 +47,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </span>
             </div>
             <nav className={flex({ flexDir: 'column', rowGap: 2, mt: 4 })}>
+              <NavLink
+                href="/dashboard"
+                label="Dashboard"
+                iconEl={<DashboardIcon />}
+              />
               <NavLink href="/notes" label="Notes" iconEl={<NoteIcon />} />
               <NavLink href="/tasks" label="Tasks" iconEl={<TaskIcon />} />
             </nav>

@@ -7,12 +7,14 @@ import { NoteIcon } from '../../../components/icons/NoteIcon';
 import { TaskIcon } from '../../../components/icons/TaskIcon';
 import { Header } from '../../_components/Header/Header';
 import { MainContents } from '../../_components/MainContents/MainContents';
+import { Status } from './_components/Status';
 import { TaskEditor } from './_components/TaskEditor/TaskEditor';
 
 export default async function Page({ params }: { params: { taskId: string } }) {
   const task = await prisma.task.findUnique({
     select: {
       title: true,
+      status: true,
       note: {
         select: {
           noteId: true,
@@ -78,8 +80,17 @@ export default async function Page({ params }: { params: { taskId: string } }) {
                   },
                 })}
               >
-                <NoteIcon className={css({ w: 4, h: 4, color: 'gray.500' })} />
-                {task.note.title}
+                <NoteIcon
+                  className={css({
+                    flex: '0 0 auto',
+                    w: 4,
+                    h: 4,
+                    color: 'gray.500',
+                  })}
+                />
+                <span className={css({ flex: 1, ellipsis: '1' })}>
+                  {task.note.title}
+                </span>
               </Link>
             </li>
             <li
@@ -89,18 +100,39 @@ export default async function Page({ params }: { params: { taskId: string } }) {
                 gap: 1,
               })}
             >
-              <TaskIcon className={css({ w: 4, h: 4, color: 'gray.500' })} />
-              {task.title}
+              <TaskIcon
+                className={css({
+                  flex: '0 0 auto',
+                  w: 4,
+                  h: 4,
+                  color: 'gray.500',
+                })}
+              />
+              <span className={css({ flex: 1, ellipsis: '1' })}>
+                {task.title}
+              </span>
             </li>
           </ol>
         }
       />
-      <MainContents
-        className={css({
-          p: '48px',
-        })}
-      >
-        <TaskEditor taskId={params.taskId} />
+      <MainContents>
+        <div
+          className={css({
+            px: 10,
+            py: 4,
+            borderBottom: '1px solid token(colors.gray.100)',
+          })}
+        >
+          <Status taskId={params.taskId} status={task.status} />
+        </div>
+        <div
+          className={css({
+            px: 12,
+            py: 8,
+          })}
+        >
+          <TaskEditor taskId={params.taskId} />
+        </div>
       </MainContents>
     </>
   );

@@ -22,7 +22,7 @@ model Note {
 
 enum TaskStatus {
   TODO
-  DOING
+  IN_PROGRESS
   DONE
 }
 
