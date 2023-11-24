@@ -9,7 +9,7 @@ const COLLAPSED_HEIGHT = 384;
 const COLLAPSED_OFFSET = 64;
 
 interface Props {
-  task: Pick<Task, 'id' | 'title' | 'status' | 'contentHtml'>;
+  task: Pick<Task, 'taskId' | 'title' | 'status' | 'contentHtml'>;
 }
 export const TaskCard = ({ task }: Props) => {
   const contentRef = useRef<HTMLDivElement>(null);

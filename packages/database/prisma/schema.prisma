@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Note {
-  id             String   @id @default(uuid())
+  noteId         String   @id @default(uuid())
   title          String
   titleBlobUrl   String?
   contentHtml    String?
@@ -27,7 +27,7 @@ enum TaskStatus {
 }
 
 model Task {
-  id             String     @id @default(uuid())
+  taskId         String     @id @default(uuid())
   title          String
   titleBlobUrl   String?
   contentHtml    String?
@@ -36,6 +36,6 @@ model Task {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 
-  note   Note   @relation(fields: [noteId], references: [id])
+  note   Note   @relation(fields: [noteId], references: [noteId])
   noteId String
 }

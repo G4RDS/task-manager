@@ -71,11 +71,11 @@ const server = new Hocuspocus({
         docType === 'note'
           ? await prisma.note.findUnique({
               select: { title: true, titleBlobUrl: true },
-              where: { id },
+              where: { noteId: id },
             })
           : await prisma.task.findUnique({
               select: { title: true, titleBlobUrl: true },
-              where: { id },
+              where: { taskId: id },
             });
 
       if (!doc) {
@@ -96,11 +96,11 @@ const server = new Hocuspocus({
         docType === 'note'
           ? await prisma.note.findUnique({
               select: { contentBlobUrl: true },
-              where: { id },
+              where: { noteId: id },
             })
           : await prisma.task.findUnique({
               select: { contentBlobUrl: true },
-              where: { id },
+              where: { taskId: id },
             });
 
       if (!doc) {
@@ -130,7 +130,7 @@ const server = new Hocuspocus({
 
       if (docType === 'note') {
         await prisma.note.update({
-          where: { id },
+          where: { noteId: id },
           data: {
             title: getTitleTextFromYdoc(data.document),
             titleBlobUrl: res.url,
@@ -138,7 +138,7 @@ const server = new Hocuspocus({
         });
       } else {
         await prisma.task.update({
-          where: { id },
+          where: { taskId: id },
           data: {
             title: getTitleTextFromYdoc(data.document),
             titleBlobUrl: res.url,
@@ -160,7 +160,7 @@ const server = new Hocuspocus({
 
       if (docType === 'note') {
         await prisma.note.update({
-          where: { id },
+          where: { noteId: id },
           data: {
             contentBlobUrl: res.url,
             contentHtml: html,
@@ -168,7 +168,7 @@ const server = new Hocuspocus({
         });
       } else {
         await prisma.task.update({
-          where: { id },
+          where: { taskId: id },
           data: {
             contentBlobUrl: res.url,
             contentHtml: html,

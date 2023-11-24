@@ -15,13 +15,13 @@ export default async function Page({ params }: { params: { taskId: string } }) {
       title: true,
       note: {
         select: {
-          id: true,
+          noteId: true,
           title: true,
         },
       },
     },
     where: {
-      id: params.taskId,
+      taskId: params.taskId,
     },
   });
 
@@ -62,7 +62,7 @@ export default async function Page({ params }: { params: { taskId: string } }) {
           >
             <li>
               <Link
-                href={`/notes/${task.note.id}`}
+                href={`/notes/${task.note.noteId}`}
                 className={css({
                   display: 'flex',
                   alignItems: 'center',

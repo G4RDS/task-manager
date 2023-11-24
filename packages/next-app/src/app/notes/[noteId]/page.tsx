@@ -15,7 +15,7 @@ export default async function Page({ params }: { params: { noteId: string } }) {
       title: true,
     },
     where: {
-      id: params.noteId,
+      noteId: params.noteId,
     },
   });
 

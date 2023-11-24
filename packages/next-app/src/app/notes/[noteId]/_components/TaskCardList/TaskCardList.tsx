@@ -9,13 +9,13 @@ interface Props {
 export const TaskCardList = async ({ noteId }: Props) => {
   const tasks = await prisma.task.findMany({
     select: {
-      id: true,
+      taskId: true,
       title: true,
       status: true,
       contentHtml: true,
     },
     where: {
-      noteId: noteId,
+      noteId,
     },
     orderBy: {
       updatedAt: 'desc',
@@ -25,8 +25,8 @@ export const TaskCardList = async ({ noteId }: Props) => {
   return (
     <ul className={flex({ flexDir: 'column', gap: 3 })}>
       {tasks.map((task) => (
-        <li key={task.id}>
-          <Link href={`/tasks/${task.id}`}>
+        <li key={task.taskId}>
+          <Link href={`/tasks/${task.taskId}`}>
             <TaskCard task={task} />
           </Link>
         </li>

@@ -16,7 +16,7 @@ export const getNotes: FastifyPluginAsync = async (fastify) => {
 
     const notes = await prisma.note.findMany({
       select: {
-        id: true,
+        noteId: true,
         title: true,
       },
     });

@@ -21,7 +21,7 @@ export const createNoteAndRedirect = async (
   });
 
   revalidatePath('/');
-  redirect(`/notes/${note.id}`);
+  redirect(`/notes/${note.noteId}`);
 
   return ++state;
 };
