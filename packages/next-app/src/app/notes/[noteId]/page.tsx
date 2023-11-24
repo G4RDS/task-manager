@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from 'database';
 import { css } from '../../../../styled-system/css';
@@ -54,29 +53,16 @@ export default async function Page({ params }: { params: { noteId: string } }) {
               },
             })}
           >
-            <li>
-              <Link
-                href="/notes"
-                className={css({
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  mr: -2,
-                  py: 1,
-                  px: 2,
-                  borderRadius: '6px',
-                  transition: '0.15s token(easings.easeOut)',
-                  color: 'inherit',
-                  _hover: {
-                    bgColor: 'gray.100',
-                  },
-                })}
-              >
-                <NoteIcon className={css({ w: 4, h: 4, color: 'gray.500' })} />
-                Notes
-              </Link>
+            <li
+              className={css({
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              })}
+            >
+              <NoteIcon className={css({ w: 4, h: 4, color: 'gray.500' })} />
+              {note.title}
             </li>
-            <li>{note.title}</li>
           </ol>
         }
       />

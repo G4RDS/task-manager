@@ -62,30 +62,11 @@ export default async function Page({ params }: { params: { taskId: string } }) {
           >
             <li>
               <Link
-                href="/notes"
-                className={css({
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  mr: -2,
-                  py: 1,
-                  px: 2,
-                  borderRadius: '6px',
-                  transition: '0.15s token(easings.easeOut)',
-                  color: 'inherit',
-                  _hover: {
-                    bgColor: 'gray.100',
-                  },
-                })}
-              >
-                <NoteIcon className={css({ w: 4, h: 4, color: 'gray.500' })} />
-                Notes
-              </Link>
-            </li>
-            <li>
-              <Link
                 href={`/notes/${task.note.id}`}
                 className={css({
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
                   mx: -2,
                   py: 1,
                   px: 2,
@@ -97,6 +78,7 @@ export default async function Page({ params }: { params: { taskId: string } }) {
                   },
                 })}
               >
+                <NoteIcon className={css({ w: 4, h: 4, color: 'gray.500' })} />
                 {task.note.title}
               </Link>
             </li>

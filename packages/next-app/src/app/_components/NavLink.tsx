@@ -19,7 +19,7 @@ export const NavLink = ({
   return (
     <Link
       href={href}
-      aria-current={pathname.startsWith(href) ? 'page' : undefined}
+      aria-current={pathname === href ? 'page' : undefined}
       className={flex({
         alignItems: 'center',
         py: 1,
