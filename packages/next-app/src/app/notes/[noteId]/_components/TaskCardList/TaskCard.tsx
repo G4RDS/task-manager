@@ -172,29 +172,18 @@ export const TaskCard = ({ task }: Props) => {
                 e.stopPropagation();
                 setIsCollapsed((prev) => !prev);
 
-                if (isCollapsed) {
-                  contentRef.current?.animate(
-                    [
-                      { maxHeight: `${COLLAPSED_HEIGHT}px` },
-                      { maxHeight: `${contentHeight.current}px` },
-                    ],
-                    {
-                      duration: 150,
-                      easing: token('easings.easeOut'),
-                    },
-                  );
-                } else {
-                  contentRef.current?.animate(
-                    [
-                      { maxHeight: `${contentHeight.current}px` },
-                      { maxHeight: `${COLLAPSED_HEIGHT}px` },
-                    ],
-                    {
-                      duration: 150,
-                      easing: token('easings.easeOut'),
-                    },
-                  );
-                }
+                const keyframes = [
+                  { maxHeight: `${COLLAPSED_HEIGHT}px` },
+                  { maxHeight: `${contentHeight.current}px` },
+                ];
+
+                contentRef.current?.animate(
+                  isCollapsed ? keyframes : keyframes.reverse(),
+                  {
+                    duration: 150,
+                    easing: token('easings.easeOut'),
+                  },
+                );
               }}
               className={css({
                 w: '100%',
