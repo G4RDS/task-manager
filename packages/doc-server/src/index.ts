@@ -1,12 +1,8 @@
 import { Hocuspocus } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
-import { generateHTML } from '@tiptap/html';
 import { put } from '@vercel/blob';
 import { prisma } from 'database';
-import {
-  noteTitleBaseExtensions,
-  taskContentBaseExtensions,
-} from 'tiptap-shared';
+import { noteTitleBaseExtensions } from 'tiptap-shared';
 import * as Y from 'yjs';
 import { z } from 'zod';
 
@@ -125,17 +121,10 @@ const server = new Hocuspocus({
         cacheControlMaxAge: 0,
       });
 
-      const prosemirrorJson = TiptapTransformer.fromYdoc(data.document);
-      const html = generateHTML(
-        prosemirrorJson.default,
-        taskContentBaseExtensions,
-      );
-
       await prisma.note.update({
         where: { noteId: id },
         data: {
           contentBlobUrl: res.url,
-          contentHtml: html,
         },
       });
     }
