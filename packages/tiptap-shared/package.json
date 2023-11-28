@@ -7,6 +7,7 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
+    "@tiptap/core": "^2.1.12",
     "@tiptap/extension-bold": "^2.1.12",
     "@tiptap/extension-bullet-list": "^2.1.12",
     "@tiptap/extension-collaboration": "^2.1.12",
