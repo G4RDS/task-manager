@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { prisma } from 'database';
 import { flex } from '../../../../../../styled-system/patterns';
 import { TaskCard } from './TaskCard';
@@ -12,7 +11,6 @@ export const TaskCardList = async ({ noteId }: Props) => {
       taskId: true,
       title: true,
       status: true,
-      contentHtml: true,
     },
     where: {
       noteId,
@@ -26,9 +24,7 @@ export const TaskCardList = async ({ noteId }: Props) => {
     <ul className={flex({ flexDir: 'column', gap: 3 })}>
       {tasks.map((task) => (
         <li key={task.taskId}>
-          <Link href={`/tasks/${task.taskId}`}>
-            <TaskCard task={task} />
-          </Link>
+          <TaskCard task={task} />
         </li>
       ))}
     </ul>

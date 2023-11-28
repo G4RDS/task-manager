@@ -10,7 +10,7 @@ import {
 import * as Y from 'yjs';
 import { z } from 'zod';
 
-const docTypeSchema = z.union([z.literal('note'), z.literal('task')]);
+const docTypeSchema = z.literal('note');
 const contentTypeSchema = z.union([z.literal('title'), z.literal('content')]);
 
 const convertFromDocumentName = (documentName: string) => {
@@ -22,7 +22,6 @@ const convertFromDocumentName = (documentName: string) => {
   return { docType, id, contentType } as const;
 };
 
-// TODO: noteとtaskで分ける
 const titleTransformer = TiptapTransformer.extensions(noteTitleBaseExtensions);
 
 const getTitleTextFromYdoc = (doc: Y.Doc): string => {
@@ -62,21 +61,13 @@ const server = new Hocuspocus({
     console.log('disconnect:', data.documentName);
   },
   onLoadDocument: async (data): Promise<Y.Doc> => {
-    const { id, docType, contentType } = convertFromDocumentName(
-      data.documentName,
-    );
+    const { id, contentType } = convertFromDocumentName(data.documentName);
 
     if (contentType === 'title') {
-      const doc =
-        docType === 'note'
-          ? await prisma.note.findUnique({
-              select: { title: true, titleBlobUrl: true },
-              where: { noteId: id },
-            })
-          : await prisma.task.findUnique({
-              select: { title: true, titleBlobUrl: true },
-              where: { taskId: id },
-            });
+      const doc = await prisma.note.findUnique({
+        select: { title: true, titleBlobUrl: true },
+        where: { noteId: id },
+      });
 
       if (!doc) {
         throw new Error('Note not found');
@@ -92,16 +83,10 @@ const server = new Hocuspocus({
 
       return data.document;
     } else {
-      const doc =
-        docType === 'note'
-          ? await prisma.note.findUnique({
-              select: { contentBlobUrl: true },
-              where: { noteId: id },
-            })
-          : await prisma.task.findUnique({
-              select: { contentBlobUrl: true },
-              where: { taskId: id },
-            });
+      const doc = await prisma.note.findUnique({
+        select: { contentBlobUrl: true },
+        where: { noteId: id },
+      });
 
       if (!doc) {
         throw new Error('Note not found');
@@ -117,9 +102,7 @@ const server = new Hocuspocus({
     }
   },
   onStoreDocument: async (data) => {
-    const { id, docType, contentType } = convertFromDocumentName(
-      data.documentName,
-    );
+    const { id, contentType } = convertFromDocumentName(data.documentName);
 
     if (contentType === 'title') {
       const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
@@ -128,23 +111,13 @@ const server = new Hocuspocus({
         cacheControlMaxAge: 0,
       });
 
-      if (docType === 'note') {
-        await prisma.note.update({
-          where: { noteId: id },
-          data: {
-            title: getTitleTextFromYdoc(data.document),
-            titleBlobUrl: res.url,
-          },
-        });
-      } else {
-        await prisma.task.update({
-          where: { taskId: id },
-          data: {
-            title: getTitleTextFromYdoc(data.document),
-            titleBlobUrl: res.url,
-          },
-        });
-      }
+      await prisma.note.update({
+        where: { noteId: id },
+        data: {
+          title: getTitleTextFromYdoc(data.document),
+          titleBlobUrl: res.url,
+        },
+      });
     } else {
       const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
       const res = await put(data.documentName, buf, {
@@ -158,23 +131,13 @@ const server = new Hocuspocus({
         taskContentBaseExtensions,
       );
 
-      if (docType === 'note') {
-        await prisma.note.update({
-          where: { noteId: id },
-          data: {
-            contentBlobUrl: res.url,
-            contentHtml: html,
-          },
-        });
-      } else {
-        await prisma.task.update({
-          where: { taskId: id },
-          data: {
-            contentBlobUrl: res.url,
-            contentHtml: html,
-          },
-        });
-      }
+      await prisma.note.update({
+        where: { noteId: id },
+        data: {
+          contentBlobUrl: res.url,
+          contentHtml: html,
+        },
+      });
     }
   },
   onDestroy: async () => {
