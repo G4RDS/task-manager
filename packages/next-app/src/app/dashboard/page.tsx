@@ -40,6 +40,9 @@ export default async function Page() {
       },
     },
     where: {},
+    orderBy: {
+      updatedAt: 'desc',
+    },
   });
 
   return (
@@ -103,6 +106,7 @@ export default async function Page() {
             </p>
             <p
               className={css({
+                mr: 3,
                 fontSize: '0.9375rem',
                 fontWeight: 500,
                 color: 'gray.800',

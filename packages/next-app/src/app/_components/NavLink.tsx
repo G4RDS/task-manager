@@ -49,7 +49,13 @@ export const NavLink = ({
       >
         <div className={css({ width: 4, height: 4 })}>{iconEl}</div>
       </div>
-      <div className={css({ fontSize: '15px', color: 'gray.800' })}>
+      <div
+        className={css({
+          fontSize: '15px',
+          fontWeight: 500,
+          color: 'gray.700',
+        })}
+      >
         {label}
       </div>
     </Link>
