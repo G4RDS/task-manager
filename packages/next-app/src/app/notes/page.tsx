@@ -5,6 +5,8 @@ import { MainContents } from '../_components/MainContents/MainContents';
 import { NoteCards } from '../_components/NoteCards/NoteCards';
 import { CreateNoteForm } from './_components/CreateNoteForm/CreateNoteForm';
 
+export const dynamic = 'force-dynamic';
+
 export default function Page() {
   return (
     <>

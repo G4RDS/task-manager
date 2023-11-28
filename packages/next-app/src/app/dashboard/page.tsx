@@ -7,6 +7,8 @@ import { uiByTaskStatus } from '../../utils/taskStatus';
 import { Header } from '../_components/Header/Header';
 import { MainContents } from '../_components/MainContents/MainContents';
 
+export const dynamic = 'force-dynamic';
+
 const thisYear = new Date().getFullYear();
 
 const intlMonthDateFormat = new Intl.DateTimeFormat('ja-JP', {
@@ -51,7 +53,7 @@ export default async function Page() {
       <MainContents>
         {tasks.map((task) => (
           <Link
-            href={`/tasks/${task.taskId}`}
+            href={`/notes/${task.note.noteId}`}
             key={task.taskId}
             className={flex({
               alignItems: 'center',

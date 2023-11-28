@@ -9,6 +9,8 @@ import { CreateTaskForm } from './_components/CreateTaskForm/CreateTaskForm';
 import { NoteEditor } from './_components/NoteEditor/NoteEditor';
 import { TaskCardList } from './_components/TaskCardList/TaskCardList';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page({ params }: { params: { noteId: string } }) {
   const note = await prisma.note.findUnique({
     select: {
