@@ -27,14 +27,11 @@ enum TaskStatus {
 }
 
 model Task {
-  taskId         String     @id @default(uuid())
-  title          String
-  titleBlobUrl   String?
-  contentHtml    String?
-  contentBlobUrl String?
-  status         TaskStatus @default(TODO)
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  taskId    String     @id @default(uuid())
+  title     String
+  status    TaskStatus @default(TODO)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   note   Note   @relation(fields: [noteId], references: [noteId])
   noteId String
