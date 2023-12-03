@@ -34,6 +34,7 @@ export const GET = async (
 const putTaskRequestSchema = z.object({
   title: z.string().optional(),
   status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
+  order: z.string(),
 });
 export type PutTaskRequest = z.infer<typeof putTaskRequestSchema>;
 
@@ -52,6 +53,7 @@ export const PUT = async (
     data: {
       title: body.title,
       status: body.status,
+      order: body.order,
     },
     select: {
       taskId: true,
