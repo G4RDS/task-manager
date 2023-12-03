@@ -32,9 +32,15 @@ export const GET = async (
 };
 
 const putTaskRequestSchema = z.object({
-  title: z.string(),
+  title: z.string().optional(),
+  status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
 });
-export type PostTaskRequest = z.infer<typeof putTaskRequestSchema>;
+export type PutTaskRequest = z.infer<typeof putTaskRequestSchema>;
+
+export type PutTaskResponse = {
+  data: Pick<Task, 'taskId' | 'title' | 'status' | 'createdAt' | 'updatedAt'> &
+    Pick<Note, 'noteId'>;
+};
 
 export const PUT = async (
   req: NextRequest,
@@ -45,6 +51,7 @@ export const PUT = async (
   const task = await prisma.task.update({
     data: {
       title: body.title,
+      status: body.status,
     },
     select: {
       taskId: true,
