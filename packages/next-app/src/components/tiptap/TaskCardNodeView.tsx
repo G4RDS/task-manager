@@ -33,11 +33,25 @@ export const TaskCardNodeView = (props: Props) => (
       my: 3,
     })}
   >
-    <Suspense fallback={'loading'}>
+    <Suspense fallback={<TaskCardSkeleton />}>
       <TaskCardNodeViewContents {...props} />
     </Suspense>
   </NodeViewWrapper>
 );
+
+const TaskCardSkeleton = () => {
+  return (
+    <div
+      className={css({
+        h: 12,
+        border: '1px solid token(colors.gray.100)',
+        borderRadius: '14px',
+        bgColor: '#fff',
+        boxShadow: 'md',
+      })}
+    />
+  );
+};
 
 const TaskCardNodeViewContents = ({ node }: Props) => {
   const { data: task, mutate } = useSWR(
