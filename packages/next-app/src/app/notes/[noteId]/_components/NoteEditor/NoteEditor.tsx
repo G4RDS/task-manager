@@ -1,15 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  BubbleMenu,
-  Editor,
-  EditorContent,
-  Extensions,
-  useEditor,
-} from '@tiptap/react';
+import { EditorContent, Extensions, useEditor } from '@tiptap/react';
 import { css, cx } from '../../../../../../styled-system/css';
 import { flex } from '../../../../../../styled-system/patterns';
+import { CustomBubbleMenu } from '../../../../../components/tiptap/CustomBubbleMenu';
+import { CustomFloatingMenu } from '../../../../../components/tiptap/CustomFloatingMenu';
 import {
   createNoteContentDocConnection,
   createNoteTitleDocConnection,
@@ -110,6 +106,7 @@ export const NoteEditor = ({
     <NoteEditorInner
       titleDocExtensions={titleDocExtensions}
       contentDocExtensions={contentDocExtensions}
+      noteId={noteId}
       className={className}
     />
   );
@@ -118,10 +115,12 @@ export const NoteEditor = ({
 const NoteEditorInner = ({
   titleDocExtensions,
   contentDocExtensions,
+  noteId,
   className,
 }: {
   titleDocExtensions: Extensions;
   contentDocExtensions: Extensions;
+  noteId: string;
   className?: string;
 }) => {
   const titleEditor = useEditor({
@@ -161,6 +160,7 @@ const NoteEditorInner = ({
         })}
         editor={titleEditor}
       />
+      <CustomFloatingMenu editor={contentEditor} noteId={noteId} />
       <EditorContent
         className={flex({
           flex: '1',
@@ -229,43 +229,5 @@ const NoteEditorInner = ({
       />
       <CustomBubbleMenu editor={contentEditor} />
     </div>
-  );
-};
-
-const CustomBubbleMenu = ({ editor }: { editor: Editor }) => {
-  return (
-    <BubbleMenu
-      editor={editor}
-      className={flex({
-        alignItems: 'stretch',
-        height: '32px',
-        backgroundColor: 'white',
-        borderRadius: 6,
-        boxShadow: 'md',
-      })}
-    >
-      <button
-        type="button"
-        onClick={() => editor?.chain().focus().toggleBold().run()}
-        data-active={editor?.isActive('bold') || undefined}
-        className={flex({
-          alignItems: 'center',
-          px: 2,
-          transition: 'background 20ms token(easings.easeIn)',
-          cursor: 'pointer',
-          color: 'gray.700',
-          fontWeight: 'bold',
-          fontSize: '14px',
-          _hover: {
-            bg: 'gray.50',
-          },
-          _active: {
-            color: 'primary.500',
-          },
-        })}
-      >
-        B
-      </button>
-    </BubbleMenu>
   );
 };

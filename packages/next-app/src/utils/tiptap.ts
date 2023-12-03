@@ -1,10 +1,13 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import Collaboration from '@tiptap/extension-collaboration';
 import Placeholder from '@tiptap/extension-placeholder';
+import { ReactNodeViewRenderer } from '@tiptap/react';
 import {
+  TaskCard,
   noteContentBaseExtensions,
   noteTitleBaseExtensions,
 } from 'tiptap-shared';
+import { TaskCardNodeView } from '../components/tiptap/TaskCardNodeView';
 
 export const createNoteTitleDocConnection = (noteId: string) => {
   const provider = new HocuspocusProvider({
@@ -39,6 +42,11 @@ export const createNoteContentDocConnection = (noteId: string) => {
     ...noteContentBaseExtensions,
     Collaboration.configure({
       document: provider.document,
+    }),
+    TaskCard.extend({
+      addNodeView() {
+        return ReactNodeViewRenderer(TaskCardNodeView);
+      },
     }),
   ];
 
