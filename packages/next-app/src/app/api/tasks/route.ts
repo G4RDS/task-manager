@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from 'database';
 import { Note, Task } from 'database/src/utils/prisma';
+import { generateKeyBetween } from 'fractional-indexing';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
@@ -18,10 +19,20 @@ export type PostTaskResponse = {
 export const POST = async (req: NextRequest) => {
   const body = postTaskRequestSchema.parse(await req.json());
 
+  const firstTask = await prisma.task.findFirst({
+    select: {
+      order: true,
+    },
+    orderBy: {
+      order: 'asc',
+    },
+  });
+  const minimumOrder = generateKeyBetween(undefined, firstTask?.order);
   const task = await prisma.task.create({
     data: {
       title: '',
       noteId: body.noteId,
+      order: minimumOrder,
     },
     select: {
       taskId: true,
