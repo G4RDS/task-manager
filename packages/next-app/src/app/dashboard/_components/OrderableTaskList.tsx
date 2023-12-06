@@ -13,6 +13,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   SortableContext,
   arrayMove,
@@ -25,6 +26,7 @@ import { Note, Task } from 'database/src/utils/prisma';
 import { generateKeyBetween } from 'fractional-indexing';
 import { css, cx } from '../../../../styled-system/css';
 import { flex } from '../../../../styled-system/patterns';
+import { token } from '../../../../styled-system/tokens';
 import { GrabDotsIcon } from '../../../components/icons/GrabDotsIcon';
 import { uiByTaskStatus } from '../../../utils/taskStatus';
 
@@ -132,7 +134,10 @@ export const OrderableTaskList = ({ tasks }: Props) => {
           />
         ))}
       </SortableContext>
-      <DragOverlay>
+      <DragOverlay
+        dropAnimation={{ duration: 150, easing: token('easings.easeInOut') }}
+        modifiers={[restrictToVerticalAxis]}
+      >
         {draggingTask ? <TaskItem task={draggingTask} /> : null}
       </DragOverlay>
     </DndContext>
