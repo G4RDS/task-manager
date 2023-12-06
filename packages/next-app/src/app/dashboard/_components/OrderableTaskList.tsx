@@ -5,6 +5,8 @@ import { useMemo, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
@@ -54,6 +56,7 @@ export const OrderableTaskList = ({ tasks }: Props) => {
   const [locallyOrderedTaskIds, setLocallyOrderedTaskIds] = useState(
     tasks.map((task) => task.taskId),
   );
+  const [draggingTaskId, setDraggingTaskId] = useState<string>();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -62,7 +65,13 @@ export const OrderableTaskList = ({ tasks }: Props) => {
     }),
   );
 
+  const onDragStart = (e: DragStartEvent) => {
+    setDraggingTaskId(e.active.id as string);
+  };
+
   const onDragEnd = async (e: DragEndEvent) => {
+    setDraggingTaskId(undefined);
+
     const activeTaskIndex = tasks.findIndex(
       (task) => task.taskId === e.active.id,
     );
@@ -100,10 +109,15 @@ export const OrderableTaskList = ({ tasks }: Props) => {
     [locallyOrderedTaskIds, tasks],
   );
 
+  const draggingTask = locallyOrderedTasks.find(
+    (v) => v.taskId === draggingTaskId,
+  );
+
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={onDragStart}
       onDragEnd={onDragEnd}
     >
       <SortableContext
@@ -111,17 +125,29 @@ export const OrderableTaskList = ({ tasks }: Props) => {
         strategy={verticalListSortingStrategy}
       >
         {locallyOrderedTasks.map((task) => (
-          <TaskItem task={task} key={task.taskId} />
+          <SortableTaskItem
+            task={task}
+            isDragged={task.taskId === draggingTaskId}
+            key={task.taskId}
+          />
         ))}
       </SortableContext>
+      <DragOverlay>
+        {draggingTask ? <TaskItem task={draggingTask} /> : null}
+      </DragOverlay>
     </DndContext>
   );
 };
 
-const TaskItem = ({ task }: { task: Props['tasks'][number] }) => {
+const SortableTaskItem = ({
+  task,
+  isDragged,
+}: {
+  task: Props['tasks'][number];
+  isDragged: boolean;
+}) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: task.taskId });
-
   return (
     <div
       ref={setNodeRef}
@@ -129,6 +155,29 @@ const TaskItem = ({ task }: { task: Props['tasks'][number] }) => {
         transform: CSS.Transform.toString(transform),
         transition,
       }}
+      className={css({
+        position: 'relative',
+        ['&[data-dragged="true"]::after']: {
+          content: '""',
+          position: 'absolute',
+          inset: '4px',
+          background: '#fff',
+          borderRadius: '6px',
+          border: '1px dashed token(colors.gray.200)',
+        },
+      })}
+      data-dragged={isDragged}
+      {...attributes}
+      {...listeners}
+    >
+      <TaskItem task={task} />
+    </div>
+  );
+};
+
+const TaskItem = ({ task }: { task: Props['tasks'][number] }) => {
+  return (
+    <div
       className={flex({
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -144,8 +193,6 @@ const TaskItem = ({ task }: { task: Props['tasks'][number] }) => {
           },
         },
       })}
-      {...attributes}
-      {...listeners}
     >
       <GrabDotsIcon
         className={cx(
