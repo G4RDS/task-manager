@@ -16,19 +16,27 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   SortableContext,
-  arrayMove,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Note, Task } from 'database/src/utils/prisma';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { generateKeyBetween } from 'fractional-indexing';
+import { z } from 'zod';
 import { css, cx } from '../../../../styled-system/css';
 import { flex } from '../../../../styled-system/patterns';
 import { token } from '../../../../styled-system/tokens';
 import { GrabDotsIcon } from '../../../components/icons/GrabDotsIcon';
+import { queries } from '../../../utils/query';
 import { uiByTaskStatus } from '../../../utils/taskStatus';
+import { getTasksResponseSchema } from '../../api/tasks/route';
+
+type Task = z.infer<typeof getTasksResponseSchema>['data'][number];
 
 const thisYear = new Date().getFullYear();
 
@@ -48,17 +56,70 @@ const formatCreatedAt = (createdAt: Date) => {
   return intlFullDateFormat.format(createdAt);
 };
 
-interface Props {
-  tasks: (Pick<Task, 'taskId' | 'title' | 'status' | 'order' | 'createdAt'> & {
-    note: Pick<Note, 'noteId' | 'title'>;
-  })[];
-}
+const generateMutationArgs = (
+  tasks: Task[],
+  targetId: string,
+  moveToId: string,
+) => {
+  const targetIdx = tasks.findIndex((v) => v.taskId === targetId);
+  const moveToIdx = tasks.findIndex((v) => v.taskId === moveToId);
+  const moveToTask = tasks[moveToIdx];
 
-export const OrderableTaskList = ({ tasks }: Props) => {
-  const [locallyOrderedTaskIds, setLocallyOrderedTaskIds] = useState(
-    tasks.map((task) => task.taskId),
-  );
+  if (targetIdx === -1 || moveToIdx === -1) {
+    throw new Error('Task not found');
+  }
+
+  const newTasks = [...tasks];
+  newTasks.splice(moveToIdx, 0, newTasks.splice(targetIdx, 1)[0]);
+  const newOrder =
+    moveToIdx < targetIdx
+      ? generateKeyBetween(
+          moveToIdx > 0 ? tasks[moveToIdx - 1].order : null,
+          moveToTask.order,
+        )
+      : generateKeyBetween(
+          moveToTask.order,
+          moveToIdx < tasks.length - 1 ? tasks[moveToIdx + 1].order : null,
+        );
+  const targetTask = newTasks.find((v) => v.taskId === targetId)!;
+  targetTask.order = newOrder;
+
+  return {
+    newTasks,
+    targetTask,
+  } as const;
+};
+
+export const OrderableTaskList = () => {
+  const queryClient = useQueryClient();
+  const { data: _tasks } = useSuspenseQuery({
+    ...queries.getTasks(),
+  });
+  const {
+    mutateAsync: mutateMoveTask,
+    isPending,
+    variables,
+  } = useMutation({
+    mutationFn: async ({
+      targetTask,
+    }: {
+      newTasks: Task[];
+      targetTask: Task;
+    }) => {
+      await fetch(`/api/tasks/${targetTask.taskId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ order: targetTask.order }),
+      });
+    },
+    onSettled: () =>
+      queryClient.invalidateQueries({
+        queryKey: queries.getTasks().queryKey,
+      }),
+  });
+  const tasks = !isPending || !variables ? _tasks : variables?.newTasks;
+
   const [draggingTaskId, setDraggingTaskId] = useState<string>();
+  const draggingTask = tasks.find((v) => v.taskId === draggingTaskId);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -74,46 +135,16 @@ export const OrderableTaskList = ({ tasks }: Props) => {
   const onDragEnd = async (e: DragEndEvent) => {
     setDraggingTaskId(undefined);
 
-    const activeTaskIndex = tasks.findIndex(
-      (task) => task.taskId === e.active.id,
-    );
-    const activeTask = tasks[activeTaskIndex];
-    const overTaskIndex = tasks.findIndex((task) => task.taskId === e.over?.id);
-    const overTask = tasks[overTaskIndex];
-    const nextTask =
-      overTaskIndex < tasks.length - 1 ? tasks[overTaskIndex + 1] : undefined;
-
-    if (!activeTask || !overTask || activeTask.taskId === overTask.taskId) {
+    if (!e.over || e.active.id === e.over.id) {
       return;
     }
 
-    setLocallyOrderedTaskIds(
-      arrayMove(locallyOrderedTaskIds, activeTaskIndex, overTaskIndex),
+    await mutateMoveTask(
+      generateMutationArgs(tasks, e.active.id as string, e.over.id as string),
     );
-
-    // TODO: localもorderを更新しないと、二回目以降のドラッグが失敗する
-    const newOrder = generateKeyBetween(overTask.order, nextTask?.order);
-    await fetch(`/api/tasks/${activeTask.taskId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ order: newOrder }),
-    });
   };
 
-  const locallyOrderedTasks = useMemo(
-    () =>
-      locallyOrderedTaskIds.map((taskId) => {
-        const task = tasks.find((task) => task.taskId === taskId);
-        if (!task) {
-          throw new Error(`Task not found: ${taskId}`);
-        }
-        return task;
-      }),
-    [locallyOrderedTaskIds, tasks],
-  );
-
-  const draggingTask = locallyOrderedTasks.find(
-    (v) => v.taskId === draggingTaskId,
-  );
+  const taskIds = useMemo(() => tasks.map((v) => v.taskId), [tasks]);
 
   return (
     <DndContext
@@ -122,11 +153,8 @@ export const OrderableTaskList = ({ tasks }: Props) => {
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
     >
-      <SortableContext
-        items={locallyOrderedTaskIds}
-        strategy={verticalListSortingStrategy}
-      >
-        {locallyOrderedTasks.map((task) => (
+      <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+        {tasks.map((task) => (
           <SortableTaskItem
             task={task}
             isDragged={task.taskId === draggingTaskId}
@@ -148,7 +176,7 @@ const SortableTaskItem = ({
   task,
   isDragged,
 }: {
-  task: Props['tasks'][number];
+  task: Task;
   isDragged: boolean;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -180,7 +208,7 @@ const SortableTaskItem = ({
   );
 };
 
-const TaskItem = ({ task }: { task: Props['tasks'][number] }) => {
+const TaskItem = ({ task }: { task: Task }) => {
   return (
     <div
       className={flex({

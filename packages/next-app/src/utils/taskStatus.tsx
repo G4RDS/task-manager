@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { TaskStatus } from 'database/src/utils/prisma';
+import { z } from 'zod';
 import { DoneIcon } from '../components/icons/taskStatus/DoneIcon';
 import { InProgressIcon } from '../components/icons/taskStatus/InProgressIcon';
 import { TodoIcon } from '../components/icons/taskStatus/TodoIcon';
@@ -24,3 +25,5 @@ export const uiByTaskStatus: Record<
     label: 'Done',
   },
 };
+
+export const taskStatusSchema = z.enum(['TODO', 'IN_PROGRESS', 'DONE']);

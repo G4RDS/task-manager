@@ -6,6 +6,7 @@ import { NoteIcon } from '../components/icons/NoteIcon';
 import { TaskIcon } from '../components/icons/TaskIcon';
 import { NavLink } from './_components/NavLink';
 import './index.css';
+import Providers from './providers';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -66,7 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               boxShadow: 'md',
             })}
           >
-            {children}
+            <Providers>{children}</Providers>
           </div>
         </div>
       </body>
