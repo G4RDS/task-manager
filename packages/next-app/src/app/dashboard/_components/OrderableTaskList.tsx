@@ -165,6 +165,15 @@ export const OrderableTaskList = () => {
       <DragOverlay
         dropAnimation={{ duration: 150, easing: token('easings.easeInOut') }}
         modifiers={[restrictToVerticalAxis]}
+        className={css({
+          pointerEvents: 'none',
+          boxShadow: 'lg',
+          borderRadius: '6px',
+          overflow: 'hidden',
+          '& .grab-dots': {
+            opacity: 1,
+          },
+        })}
       >
         {draggingTask ? <TaskItem task={draggingTask} /> : null}
       </DragOverlay>
@@ -192,6 +201,7 @@ const SortableTaskItem = ({
         position: 'relative',
         ['&[data-dragged="true"]::after']: {
           content: '""',
+          pointerEvents: 'none',
           position: 'absolute',
           inset: '4px',
           background: '#fff',
@@ -218,6 +228,7 @@ const TaskItem = ({ task }: { task: Task }) => {
         h: 12,
         pr: 3,
         borderBottom: '1px solid token(colors.gray.100)',
+        background: 'white',
         color: 'inherit',
         transition: '150ms token(easings.easeOut)',
         _hover: {
@@ -251,18 +262,20 @@ const TaskItem = ({ task }: { task: Task }) => {
       >
         {uiByTaskStatus[task.status].icon}
       </div>
-      <p
+      <Link
+        href={`/notes/${task.note.noteId}`}
         className={css({
           maxW: 48,
           mr: 3,
           fontSize: '0.75rem',
+          lineHeight: '47px',
           fontWeight: 500,
           color: 'gray.500',
           ellipsis: '1',
         })}
       >
         {task.note.title}
-      </p>
+      </Link>
       <Link
         href={`/notes/${task.note.noteId}`}
         data-empty={task.title.length === 0}
@@ -282,7 +295,6 @@ const TaskItem = ({ task }: { task: Task }) => {
       </Link>
       <p
         className={css({
-          flex: '0 0 auto',
           fontSize: '0.75rem',
           color: 'gray.500',
           textAlign: 'right',
