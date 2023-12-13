@@ -213,6 +213,7 @@ const TaskItem = ({ task }: { task: Task }) => {
     <div
       className={grid({
         gridTemplateColumns: 'auto auto minmax(8rem, 1fr) 3fr 64px',
+        gap: 0,
         alignItems: 'center',
         h: 12,
         pr: 3,
@@ -264,6 +265,7 @@ const TaskItem = ({ task }: { task: Task }) => {
       </p>
       <Link
         href={`/notes/${task.note.noteId}`}
+        data-empty={task.title.length === 0}
         className={css({
           mr: 3,
           fontSize: '0.9375rem',
@@ -271,15 +273,19 @@ const TaskItem = ({ task }: { task: Task }) => {
           fontWeight: 500,
           color: 'gray.800',
           ellipsis: '1',
+          '&[data-empty="true"]': {
+            color: 'gray.400',
+          },
         })}
       >
-        {task.title}
+        {task.title || 'Untitled'}
       </Link>
       <p
         className={css({
           flex: '0 0 auto',
           fontSize: '0.75rem',
           color: 'gray.500',
+          textAlign: 'right',
           fontVariantNumeric: 'tabular-nums',
         })}
       >
