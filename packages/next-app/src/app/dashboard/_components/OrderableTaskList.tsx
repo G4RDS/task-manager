@@ -29,7 +29,7 @@ import {
 import { generateKeyBetween } from 'fractional-indexing';
 import { z } from 'zod';
 import { css, cx } from '../../../../styled-system/css';
-import { flex } from '../../../../styled-system/patterns';
+import { grid } from '../../../../styled-system/patterns';
 import { token } from '../../../../styled-system/tokens';
 import { GrabDotsIcon } from '../../../components/icons/GrabDotsIcon';
 import { queries } from '../../../utils/query';
@@ -211,9 +211,9 @@ const SortableTaskItem = ({
 const TaskItem = ({ task }: { task: Task }) => {
   return (
     <div
-      className={flex({
+      className={grid({
+        gridTemplateColumns: 'auto auto minmax(8rem, 1fr) 3fr 64px',
         alignItems: 'center',
-        justifyContent: 'space-between',
         h: 12,
         pr: 3,
         borderBottom: '1px solid token(colors.gray.100)',
@@ -267,6 +267,7 @@ const TaskItem = ({ task }: { task: Task }) => {
         className={css({
           mr: 3,
           fontSize: '0.9375rem',
+          lineHeight: '47px',
           fontWeight: 500,
           color: 'gray.800',
           ellipsis: '1',
@@ -274,7 +275,6 @@ const TaskItem = ({ task }: { task: Task }) => {
       >
         {task.title}
       </Link>
-      <div className={css({ flex: '1 1 0' })} />
       <p
         className={css({
           flex: '0 0 auto',
