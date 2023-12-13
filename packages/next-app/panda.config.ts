@@ -137,8 +137,8 @@ export default defineConfig({
       ellipsis: {
         className: 'ellipsis',
         values: ['1', '2', '3', '4', '5'] as const,
-        transform: (value: number) =>
-          value === 1
+        transform: (value: string) =>
+          value === '1'
             ? {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
