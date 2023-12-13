@@ -7,12 +7,14 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
+  DraggableAttributes,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   SortableContext,
@@ -29,7 +31,7 @@ import {
 import { generateKeyBetween } from 'fractional-indexing';
 import { z } from 'zod';
 import { css, cx } from '../../../../styled-system/css';
-import { grid } from '../../../../styled-system/patterns';
+import { flex, grid } from '../../../../styled-system/patterns';
 import { token } from '../../../../styled-system/tokens';
 import { GrabDotsIcon } from '../../../components/icons/GrabDotsIcon';
 import { queries } from '../../../utils/query';
@@ -166,16 +168,27 @@ export const OrderableTaskList = () => {
         dropAnimation={{ duration: 150, easing: token('easings.easeInOut') }}
         modifiers={[restrictToVerticalAxis]}
         className={css({
-          pointerEvents: 'none',
-          boxShadow: 'lg',
           borderRadius: '6px',
           overflow: 'hidden',
-          '& .grab-dots': {
-            opacity: 1,
+          cursor: 'grabbing',
+          transition: '150ms box-shadow token(easings.easeOut)',
+          _hover: {
+            boxShadow: 'lg',
           },
         })}
       >
-        {draggingTask ? <TaskItem task={draggingTask} /> : null}
+        {draggingTask ? (
+          <TaskItem
+            task={draggingTask}
+            isDragOverlay={true}
+            className={css({
+              pointerEvents: 'none',
+              '& .grab-dots': {
+                opacity: 1,
+              },
+            })}
+          />
+        ) : null}
       </DragOverlay>
     </DndContext>
   );
@@ -210,51 +223,78 @@ const SortableTaskItem = ({
         },
       })}
       data-dragged={isDragged}
-      {...attributes}
-      {...listeners}
     >
-      <TaskItem task={task} />
+      <TaskItem
+        task={task}
+        grabDotsAttrs={attributes}
+        grabDotsListeners={listeners}
+        isDragOverlay={false}
+      />
     </div>
   );
 };
 
-const TaskItem = ({ task }: { task: Task }) => {
+const TaskItem = ({
+  task,
+  grabDotsAttrs,
+  grabDotsListeners,
+  isDragOverlay,
+  className,
+}: {
+  task: Task;
+  grabDotsAttrs?: DraggableAttributes;
+  grabDotsListeners?: SyntheticListenerMap;
+  isDragOverlay: boolean;
+  className?: string;
+}) => {
   return (
     <div
-      className={grid({
-        gridTemplateColumns: 'auto auto minmax(8rem, 1fr) 3fr 64px',
-        gap: 0,
-        alignItems: 'center',
-        h: 12,
-        pr: 3,
-        borderBottom: '1px solid token(colors.gray.100)',
-        background: 'white',
-        color: 'inherit',
-        transition: '150ms token(easings.easeOut)',
-        _hover: {
-          bg: 'token(colors.gray.50)',
-          '& .grab-dots': {
-            opacity: 1,
+      data-drag-overlay={isDragOverlay}
+      className={cx(
+        grid({
+          gridTemplateColumns: 'auto auto minmax(8rem, 1fr) 3fr 64px',
+          gap: 0,
+          alignItems: 'center',
+          h: 12,
+          pr: 3,
+          borderBottom: '1px solid token(colors.gray.100)',
+          background: 'white',
+          color: 'inherit',
+          transition: '150ms token(easings.easeOut)',
+          _hover: {
+            bg: 'token(colors.gray.50)',
+            '& .grab-dots': {
+              opacity: 1,
+            },
           },
-        },
-      })}
+        }),
+        className,
+      )}
     >
-      <GrabDotsIcon
+      <button
         className={cx(
           'grab-dots',
-          css({
-            flex: '0 0 auto',
+          flex({
+            alignSelf: 'stretch',
+            alignItems: 'center',
             opacity: 0,
-            h: '10px',
-            mx: 3,
-            fill: 'gray.500',
+            px: 3,
             transition: '150ms token(easings.easeOut)',
+            cursor: 'grab',
           }),
         )}
-      />
+        {...grabDotsAttrs}
+        {...grabDotsListeners}
+      >
+        <GrabDotsIcon
+          className={css({
+            h: '10px',
+            fill: 'gray.500',
+          })}
+        />
+      </button>
       <div
         className={css({
-          flex: '0 0 auto',
           w: 4,
           h: 4,
           mr: 3,
