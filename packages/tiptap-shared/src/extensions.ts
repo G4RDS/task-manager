@@ -47,3 +47,22 @@ export const noteContentBaseExtensions = [
   Paragraph,
   ListItem,
 ];
+
+export const taskTitleBaseExtensions = [
+  Document.extend({
+    content: 'block',
+  }),
+  Text,
+  Paragraph,
+];
+
+export const taskContentBaseExtensions = [
+  Document,
+  Text,
+  BulletList,
+  HardBreak,
+  OrderedList,
+  Bold,
+  Paragraph,
+  ListItem,
+];

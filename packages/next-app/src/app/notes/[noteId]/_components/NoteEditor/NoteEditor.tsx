@@ -69,7 +69,6 @@ export const NoteEditor = ({
           <div
             className={css({
               my: '1px',
-
               py: '3px',
             })}
           >
@@ -179,6 +178,8 @@ const NoteEditorInner = ({
             my: '1px',
             py: '3px',
             px: '2px',
+            fontSize: '1rem',
+            lineHeight: 1.6,
           },
           '& .tiptap h2': {
             mt: '2rem',

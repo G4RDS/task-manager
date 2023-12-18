@@ -1,6 +1,5 @@
-import { ChangeEvent, Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useState } from 'react';
-import { useDebounce } from 'react-use';
 import {
   Popover,
   PopoverContent,
@@ -9,6 +8,7 @@ import {
 } from '@radix-ui/react-popover';
 import { Node } from '@tiptap/pm/model';
 import { NodeViewWrapper } from '@tiptap/react';
+import { EditorContent, Extensions, useEditor } from '@tiptap/react';
 import { Command, CommandInput, CommandItem, CommandList } from 'cmdk';
 import { TaskStatus } from 'database/src/utils/prisma';
 import useSWR from 'swr';
@@ -18,6 +18,10 @@ import { flex } from '../../../styled-system/patterns';
 import { PutTaskResponse } from '../../app/api/tasks/[taskId]/route';
 import { swrKeyAndFetcher } from '../../utils/swr';
 import { uiByTaskStatus } from '../../utils/taskStatus';
+import {
+  createTaskContentDocConnection,
+  createTaskTitleDocConnection,
+} from '../../utils/tiptap';
 
 const statuses: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
 
@@ -45,7 +49,7 @@ const TaskCardSkeleton = () => {
       className={css({
         h: 12,
         border: '1px solid token(colors.gray.100)',
-        borderRadius: '14px',
+        borderRadius: '10px',
         bgColor: '#fff',
         boxShadow: 'md',
       })}
@@ -54,34 +58,30 @@ const TaskCardSkeleton = () => {
 };
 
 const TaskCardNodeViewContents = ({ node }: Props) => {
-  const { data: task, mutate } = useSWR(
-    ...swrKeyAndFetcher.getTask(node.attrs.taskId),
-    {
-      suspense: true,
-    },
-  );
-  const [isDirty, setIsDirty] = useState(false);
+  const taskId = node.attrs.taskId;
+  const { data: task, mutate } = useSWR(...swrKeyAndFetcher.getTask(taskId), {
+    suspense: true,
+  });
+  const [titleDocExtensions, setTitleDocExtensions] = useState<Extensions>();
+  const [contentDocExtensions, setContentDocExtensions] =
+    useState<Extensions>();
 
-  useDebounce(
-    () => {
-      if (!isDirty) return;
+  useEffect(() => {
+    const title = createTaskTitleDocConnection(taskId);
+    const content = createTaskContentDocConnection(taskId);
 
-      fetch(`/api/tasks/${task.data.taskId}`, {
-        method: 'PUT',
-        body: JSON.stringify({ title: task.data.title }),
-      });
-    },
-    300,
-    [task.data.taskId, task.data.title, isDirty] as const,
-  );
+    title.provider.on('connect', () => {
+      setTitleDocExtensions(title.extensions);
+    });
+    content.provider.on('connect', () => {
+      setContentDocExtensions(content.extensions);
+    });
 
-  const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    mutate(
-      { data: { ...task.data, title: e.target.value } },
-      { revalidate: false },
-    );
-    setIsDirty(true);
-  };
+    return () => {
+      title.provider.destroy();
+      content.provider.destroy();
+    };
+  }, [taskId]);
 
   const onChangeStatus = async (status: TaskStatus) => {
     mutate(
@@ -100,43 +100,46 @@ const TaskCardNodeViewContents = ({ node }: Props) => {
 
   return (
     <div
-      className={flex({
-        alignItems: 'stretch',
-        h: 12,
+      className={css({
         border: '1px solid token(colors.gray.100)',
-        borderRadius: '14px',
+        borderRadius: '10px',
         bgColor: '#fff',
         boxShadow: 'md',
         color: 'gray.700',
-        '&:has(input:focus)': {
+        '&:has([data-editor="true"]:focus)': {
           outline: '2px solid token(colors.primary.500)',
         },
       })}
     >
       <div
         className={flex({
-          alignItems: 'center',
-          px: 1,
+          alignItems: 'stretch',
+          h: 10,
         })}
       >
-        <Status status={task.data.status} onChange={onChangeStatus} />
+        <div
+          className={flex({
+            alignItems: 'center',
+            px: 1,
+          })}
+        >
+          <Status status={task.data.status} onChange={onChangeStatus} />
+        </div>
+        <div
+          className={css({
+            flex: '1 1 0',
+          })}
+        >
+          {titleDocExtensions && (
+            <TitleEditor extensions={titleDocExtensions} />
+          )}
+        </div>
       </div>
-      <input
-        value={task.data.title}
-        placeholder="New task..."
-        onChange={onChangeTitle}
-        className={css({
-          flex: '1 1 0',
-          display: 'block',
-          pl: 1,
-          pr: 3,
-          fontSize: '0.9375rem',
-          lineHeight: '3rem',
-          color: 'gray.900',
-          fontWeight: 500,
-          outline: 'none',
-        })}
-      />
+      <div className={css({ pl: '40px' })}>
+        {contentDocExtensions && (
+          <ContentEditor extensions={contentDocExtensions} />
+        )}
+      </div>
     </div>
   );
 };
@@ -245,5 +248,94 @@ const Status = ({
         </PopoverContent>
       </PopoverPortal>
     </Popover>
+  );
+};
+
+const TitleEditor = ({ extensions }: { extensions: Extensions }) => {
+  const editor = useEditor({
+    extensions,
+    editorProps: {
+      attributes: {
+        class: 'taskTitleEditor',
+      },
+    },
+  });
+
+  if (!editor) {
+    return null;
+  }
+
+  return (
+    <EditorContent
+      className={css({
+        position: 'relative',
+        w: '100%',
+        pr: 3,
+        outline: 'none',
+        '& .tiptap': {
+          outlineWidth: 0,
+        },
+        '& [data-placeholder]::before': {
+          content: 'attr(data-placeholder)',
+          position: 'absolute',
+          inset: '0 auto auto 0',
+          opacity: '0.15',
+          pointerEvents: 'none',
+        },
+        '& .tiptap.taskTitleEditor p': {
+          m: 0,
+          p: 0,
+          fontSize: '0.9375rem',
+          lineHeight: '40px',
+          color: 'gray.900',
+          fontWeight: 500,
+        },
+      })}
+      editor={editor}
+      data-editor={true}
+    />
+  );
+};
+
+const ContentEditor = ({ extensions }: { extensions: Extensions }) => {
+  const editor = useEditor({
+    extensions,
+    editorProps: {
+      attributes: {
+        class: 'taskContentEditor',
+      },
+    },
+  });
+
+  if (!editor) {
+    return null;
+  }
+
+  return (
+    <EditorContent
+      className={css({
+        position: 'relative',
+        w: '100%',
+        outline: 'none',
+        '& .tiptap': {
+          outlineWidth: 0,
+        },
+        '& [data-placeholder]::before': {
+          content: 'attr(data-placeholder)',
+          position: 'absolute',
+          inset: '0 auto auto 0',
+          opacity: '0.15',
+          pointerEvents: 'none',
+        },
+        '& .tiptap.taskNoteEditor p': {
+          m: 0,
+          p: 0,
+          fontSize: '1rem',
+          lineHeight: '1.6',
+        },
+      })}
+      editor={editor}
+      data-editor={true}
+    />
   );
 };
