@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -148,8 +148,11 @@ export const OrderableTaskList = () => {
 
   const taskIds = useMemo(() => tasks.map((v) => v.taskId), [tasks]);
 
+  const dndContextId = useId();
+
   return (
     <DndContext
+      id={dndContextId}
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragStart={onDragStart}
