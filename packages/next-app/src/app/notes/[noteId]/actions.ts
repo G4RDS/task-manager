@@ -12,3 +12,11 @@ export const deleteNoteAndRedirect = async (noteId: string) => {
 
   redirect(`/notes`);
 };
+
+export const deleteTask = async (taskId: string) => {
+  await prisma.task.delete({
+    where: {
+      taskId,
+    },
+  });
+};
