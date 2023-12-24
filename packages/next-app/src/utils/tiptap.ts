@@ -1,4 +1,5 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import { Extension, Extensions } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
 import Placeholder from '@tiptap/extension-placeholder';
 import { ReactNodeViewRenderer } from '@tiptap/react';
@@ -36,19 +37,19 @@ const getProvider = (documentName: string) => {
 export const createNoteDocConnection = (noteId: string) => {
   const provider = getProvider(`note/${noteId}`);
 
-  const titleExtensions = [
+  const titleExtensions: Extensions = [
     ...noteTitleBaseExtensions,
     Placeholder.configure({
       placeholder: 'Untitled',
       showOnlyCurrent: false,
-    }),
+    }) as Extension, // TODO: Fix type assertion
     Collaboration.configure({
       document: provider.document,
       field: 'title',
     }),
   ];
 
-  const contentExtensions = [
+  const contentExtensions: Extensions = [
     ...noteContentBaseExtensions,
     Collaboration.configure({
       document: provider.document,
