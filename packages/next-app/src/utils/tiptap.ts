@@ -11,13 +11,32 @@ import {
 } from 'tiptap-shared';
 import { TaskCardNodeView } from '../components/tiptap/TaskCardNodeView';
 
-export const createNoteTitleDocConnection = (noteId: string) => {
-  const provider = new HocuspocusProvider({
-    url: 'ws://localhost:8008',
-    name: `note/${noteId}/title`,
-  });
+const cachedProviders: { [key: string]: HocuspocusProvider } = {};
 
-  const extensions = [
+const getProvider = (documentName: string) => {
+  if (cachedProviders[documentName]) {
+    return cachedProviders[documentName];
+  }
+  cachedProviders[documentName] = new HocuspocusProvider({
+    url: 'ws://localhost:8008',
+    name: documentName,
+    onConnect() {
+      console.log('connect:', documentName);
+    },
+    onClose() {
+      console.log('close:', documentName);
+    },
+    onStatus(status) {
+      console.log('status:', status);
+    },
+  });
+  return cachedProviders[documentName];
+};
+
+export const createNoteDocConnection = (noteId: string) => {
+  const provider = getProvider(`note/${noteId}`);
+
+  const titleExtensions = [
     ...noteTitleBaseExtensions,
     Placeholder.configure({
       placeholder: 'Untitled',
@@ -25,25 +44,15 @@ export const createNoteTitleDocConnection = (noteId: string) => {
     }),
     Collaboration.configure({
       document: provider.document,
+      field: 'title',
     }),
   ];
 
-  return {
-    provider,
-    extensions,
-  } as const;
-};
-
-export const createNoteContentDocConnection = (noteId: string) => {
-  const provider = new HocuspocusProvider({
-    url: 'ws://localhost:8008',
-    name: `note/${noteId}/content`,
-  });
-
-  const extensions = [
+  const contentExtensions = [
     ...noteContentBaseExtensions,
     Collaboration.configure({
       document: provider.document,
+      field: 'content',
     }),
     TaskCard.extend({
       addNodeView() {
@@ -54,17 +63,15 @@ export const createNoteContentDocConnection = (noteId: string) => {
 
   return {
     provider,
-    extensions,
+    titleExtensions,
+    contentExtensions,
   } as const;
 };
 
-export const createTaskTitleDocConnection = (taskId: string) => {
-  const provider = new HocuspocusProvider({
-    url: 'ws://localhost:8008',
-    name: `task/${taskId}/title`,
-  });
+export const createTaskDocConnection = (noteId: string, taskId: string) => {
+  const provider = getProvider(`note/${noteId}`);
 
-  const extensions = [
+  const titleExtensions = [
     ...taskTitleBaseExtensions,
     Placeholder.configure({
       placeholder: 'Untitled',
@@ -72,30 +79,21 @@ export const createTaskTitleDocConnection = (taskId: string) => {
     }),
     Collaboration.configure({
       document: provider.document,
+      field: `tasks/${taskId}/title`,
     }),
   ];
 
-  return {
-    provider,
-    extensions,
-  } as const;
-};
-
-export const createTaskContentDocConnection = (taskId: string) => {
-  const provider = new HocuspocusProvider({
-    url: 'ws://localhost:8008',
-    name: `task/${taskId}/content`,
-  });
-
-  const extensions = [
+  const contentExtensions = [
     ...taskContentBaseExtensions,
     Collaboration.configure({
       document: provider.document,
+      field: `tasks/${taskId}/content`,
     }),
   ];
 
   return {
     provider,
-    extensions,
+    titleExtensions,
+    contentExtensions,
   } as const;
 };

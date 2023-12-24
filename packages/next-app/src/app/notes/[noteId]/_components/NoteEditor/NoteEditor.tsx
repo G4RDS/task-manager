@@ -6,10 +6,7 @@ import { css, cx } from '../../../../../../styled-system/css';
 import { flex } from '../../../../../../styled-system/patterns';
 import { CustomBubbleMenu } from '../../../../../components/tiptap/CustomBubbleMenu';
 import { CustomFloatingMenu } from '../../../../../components/tiptap/CustomFloatingMenu';
-import {
-  createNoteContentDocConnection,
-  createNoteTitleDocConnection,
-} from '../../../../../utils/tiptap';
+import { createNoteDocConnection } from '../../../../../utils/tiptap';
 
 export const NoteEditor = ({
   noteId,
@@ -18,28 +15,30 @@ export const NoteEditor = ({
   noteId: string;
   className?: string;
 }) => {
+  const [isReady, setIsReady] = useState(false);
   const [titleDocExtensions, setTitleDocExtensions] = useState<Extensions>();
   const [contentDocExtensions, setContentDocExtensions] =
     useState<Extensions>();
 
   useEffect(() => {
-    const title = createNoteTitleDocConnection(noteId);
-    const content = createNoteContentDocConnection(noteId);
+    const connection = createNoteDocConnection(noteId);
 
-    title.provider.on('connect', () => {
-      setTitleDocExtensions(title.extensions);
-    });
-    content.provider.on('connect', () => {
-      setContentDocExtensions(content.extensions);
+    setTitleDocExtensions(connection.titleExtensions);
+    setContentDocExtensions(connection.contentExtensions);
+
+    if (connection.provider.isConnected) {
+      setIsReady(true);
+    }
+    connection.provider.on('connect', () => {
+      setIsReady(true);
     });
 
     return () => {
-      title.provider.destroy();
-      content.provider.destroy();
+      // TODO: Destroy connection respecting other document connections
     };
   }, [noteId]);
 
-  if (!titleDocExtensions || !contentDocExtensions) {
+  if (!titleDocExtensions || !contentDocExtensions || !isReady) {
     return (
       <div
         className={cx(

@@ -18,10 +18,7 @@ import { flex } from '../../../styled-system/patterns';
 import { PutTaskResponse } from '../../app/api/tasks/[taskId]/route';
 import { swrKeyAndFetcher } from '../../utils/swr';
 import { uiByTaskStatus } from '../../utils/taskStatus';
-import {
-  createTaskContentDocConnection,
-  createTaskTitleDocConnection,
-} from '../../utils/tiptap';
+import { createTaskDocConnection } from '../../utils/tiptap';
 
 const statuses: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
 
@@ -62,26 +59,28 @@ const TaskCardNodeViewContents = ({ node }: Props) => {
   const { data: task, mutate } = useSWR(...swrKeyAndFetcher.getTask(taskId), {
     suspense: true,
   });
+  const [isReady, setIsReady] = useState(false);
   const [titleDocExtensions, setTitleDocExtensions] = useState<Extensions>();
   const [contentDocExtensions, setContentDocExtensions] =
     useState<Extensions>();
 
   useEffect(() => {
-    const title = createTaskTitleDocConnection(taskId);
-    const content = createTaskContentDocConnection(taskId);
+    const connection = createTaskDocConnection(task.data.noteId, taskId);
 
-    title.provider.on('connect', () => {
-      setTitleDocExtensions(title.extensions);
-    });
-    content.provider.on('connect', () => {
-      setContentDocExtensions(content.extensions);
+    setTitleDocExtensions(connection.titleExtensions);
+    setContentDocExtensions(connection.contentExtensions);
+
+    if (connection.provider.isConnected) {
+      setIsReady(true);
+    }
+    connection.provider.on('connect', () => {
+      setIsReady(true);
     });
 
     return () => {
-      title.provider.destroy();
-      content.provider.destroy();
+      // TODO: Destroy connection respecting other document connections
     };
-  }, [taskId]);
+  }, [task.data.noteId, taskId]);
 
   const onChangeStatus = async (status: TaskStatus) => {
     mutate(
@@ -130,13 +129,13 @@ const TaskCardNodeViewContents = ({ node }: Props) => {
             flex: '1 1 0',
           })}
         >
-          {titleDocExtensions && (
+          {titleDocExtensions && isReady && (
             <TitleEditor extensions={titleDocExtensions} />
           )}
         </div>
       </div>
       <div className={css({ pl: '40px' })}>
-        {contentDocExtensions && (
+        {contentDocExtensions && isReady && (
           <ContentEditor extensions={contentDocExtensions} />
         )}
       </div>

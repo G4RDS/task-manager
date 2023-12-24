@@ -6,16 +6,14 @@ import { noteTitleBaseExtensions } from 'tiptap-shared';
 import * as Y from 'yjs';
 import { z } from 'zod';
 
-const docTypeSchema = z.union([z.literal('note'), z.literal('task')]);
-const contentTypeSchema = z.union([z.literal('title'), z.literal('content')]);
+const docTypeSchema = z.literal('note');
 
 const convertFromDocumentName = (documentName: string) => {
   const splitted = documentName.split('/');
   const docType = docTypeSchema.parse(splitted[0]);
   const id = splitted[1];
-  const contentType = contentTypeSchema.parse(splitted[2]);
 
-  return { docType, id, contentType } as const;
+  return { docType, id } as const;
 };
 
 // TODO: noteとtaskで分ける
@@ -33,24 +31,30 @@ const getTitleTextFromYdoc = (doc: Y.Doc): string => {
 };
 
 const getYdocFromTitleText = (text: string): Y.Doc => {
-  return titleTransformer.toYdoc({
-    type: 'doc',
-    content: [
-      {
-        type: 'paragraph',
-        content: [
-          {
-            type: 'text',
-            text,
-          },
-        ],
-      },
-    ],
-  });
+  return titleTransformer.toYdoc(
+    {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text,
+            },
+          ],
+        },
+      ],
+    },
+    'title',
+  );
 };
 
 const server = new Hocuspocus({
   port: 8008,
+  onRequest: async (data) => {
+    console.log('request:', data);
+  },
   onConnect: async (data) => {
     console.log('connect:', data.documentName);
   },
@@ -58,112 +62,43 @@ const server = new Hocuspocus({
     console.log('disconnect:', data.documentName);
   },
   onLoadDocument: async (data): Promise<Y.Doc> => {
-    const { id, docType, contentType } = convertFromDocumentName(
-      data.documentName,
-    );
+    const { id } = convertFromDocumentName(data.documentName);
 
-    if (contentType === 'title') {
-      const doc =
-        docType === 'note'
-          ? await prisma.note.findUnique({
-              select: { title: true, titleBlobUrl: true },
-              where: { noteId: id },
-            })
-          : await prisma.task.findUnique({
-              select: { title: true, titleBlobUrl: true },
-              where: { taskId: id },
-            });
+    const doc = await prisma.note.findUnique({
+      select: { title: true, documentUrl: true },
+      where: { noteId: id },
+    });
 
-      if (!doc) {
-        throw new Error('Note not found');
-      }
-
-      if (doc.titleBlobUrl) {
-        const res = await fetch(doc.titleBlobUrl);
-        const buf = await res.arrayBuffer();
-        Y.applyUpdateV2(data.document, new Uint8Array(buf));
-      } else if (doc.title) {
-        return getYdocFromTitleText(doc.title);
-      }
-
-      return data.document;
-    } else {
-      const doc =
-        docType === 'note'
-          ? await prisma.note.findUnique({
-              select: { contentBlobUrl: true },
-              where: { noteId: id },
-            })
-          : await prisma.task.findUnique({
-              select: { contentBlobUrl: true },
-              where: { taskId: id },
-            });
-
-      if (!doc) {
-        throw new Error('Note not found');
-      }
-
-      if (doc.contentBlobUrl) {
-        const res = await fetch(doc.contentBlobUrl);
-        const buf = await res.arrayBuffer();
-        Y.applyUpdateV2(data.document, new Uint8Array(buf));
-      }
-
-      return data.document;
+    if (!doc) {
+      throw new Error('Note not found');
     }
+
+    if (doc.documentUrl) {
+      const res = await fetch(doc.documentUrl);
+      const buf = await res.arrayBuffer();
+      Y.applyUpdateV2(data.document, new Uint8Array(buf));
+    } else if (doc.title) {
+      data.document.merge(getYdocFromTitleText(doc.title));
+    }
+
+    return data.document;
   },
   onStoreDocument: async (data) => {
-    const { id, docType, contentType } = convertFromDocumentName(
-      data.documentName,
-    );
+    const { id } = convertFromDocumentName(data.documentName);
 
-    if (contentType === 'title') {
-      const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
-      const res = await put(data.documentName, buf, {
-        access: 'public',
-        cacheControlMaxAge: 0,
-      });
+    const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
+    const res = await put(data.documentName, buf, {
+      access: 'public',
+      cacheControlMaxAge: 0,
+    });
 
-      if (docType === 'note') {
-        await prisma.note.update({
-          where: { noteId: id },
-          data: {
-            title: getTitleTextFromYdoc(data.document),
-            titleBlobUrl: res.url,
-          },
-        });
-      } else {
-        await prisma.task.update({
-          where: { taskId: id },
-          data: {
-            title: getTitleTextFromYdoc(data.document),
-            titleBlobUrl: res.url,
-          },
-        });
-      }
-    } else {
-      const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
-      const res = await put(data.documentName, buf, {
-        access: 'public',
-        cacheControlMaxAge: 0,
-      });
-
-      if (docType === 'note') {
-        await prisma.note.update({
-          where: { noteId: id },
-          data: {
-            contentBlobUrl: res.url,
-          },
-        });
-      } else {
-        await prisma.task.update({
-          where: { taskId: id },
-          data: {
-            contentBlobUrl: res.url,
-          },
-        });
-      }
-    }
+    await prisma.note.update({
+      where: { noteId: id },
+      data: {
+        title: getTitleTextFromYdoc(data.document),
+        documentUrl: res.url,
+      },
+    });
   },
   onDestroy: async () => {
     await prisma.$disconnect();
