@@ -49,9 +49,7 @@ export const GET = async () => {
     },
   });
 
-  console.log(getTasksResponseSchema.safeParse({ data: tasks }));
-
-  return Response.json({ data: tasks });
+  return Response.json(getTasksResponseSchema.parse({ data: tasks }));
 };
 
 const postTaskRequestSchema = z.object({

@@ -1,7 +1,9 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { Extension, Extensions } from '@tiptap/core';
+import { Editor } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
 import Placeholder from '@tiptap/extension-placeholder';
+import { Node } from '@tiptap/pm/model';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import {
   TaskCard,
@@ -11,6 +13,13 @@ import {
   taskTitleBaseExtensions,
 } from 'tiptap-shared';
 import { TaskCardNodeView } from '../components/tiptap/TaskCardNodeView';
+
+export type NodeViewProps<Attributes> = {
+  editor: Editor;
+  node: Node;
+  getPos: () => number;
+  updateAttributes: (attrs: Attributes) => void;
+};
 
 const cachedProviders: { [key: string]: HocuspocusProvider } = {};
 
@@ -63,19 +72,19 @@ export const createNoteDocConnection = (noteId: string) => {
 export const createTaskDocConnection = (noteId: string, taskId: string) => {
   const provider = getProvider(`note/${noteId}`);
 
-  const titleExtensions = [
+  const titleExtensions: Extensions = [
     ...taskTitleBaseExtensions,
     Placeholder.configure({
       placeholder: 'Untitled',
       showOnlyCurrent: false,
-    }),
+    }) as Extension, // TODO: Fix type assertion
     Collaboration.configure({
       document: provider.document,
       field: `tasks/${taskId}/title`,
     }),
   ];
 
-  const contentExtensions = [
+  const contentExtensions: Extensions = [
     ...taskContentBaseExtensions,
     Collaboration.configure({
       document: provider.document,

@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import {
   Popover,
@@ -6,39 +6,52 @@ import {
   PopoverPortal,
   PopoverTrigger,
 } from '@radix-ui/react-popover';
-import { Node } from '@tiptap/pm/model';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NodeViewWrapper } from '@tiptap/react';
 import { EditorContent, Extensions, useEditor } from '@tiptap/react';
 import { Command, CommandInput, CommandItem, CommandList } from 'cmdk';
 import { TaskStatus } from 'database/src/utils/prisma';
-import useSWR from 'swr';
 import { TaskCardAttributes } from 'tiptap-shared';
 import { css } from '../../../styled-system/css';
 import { flex } from '../../../styled-system/patterns';
-import { PutTaskResponse } from '../../app/api/tasks/[taskId]/route';
-import { swrKeyAndFetcher } from '../../utils/swr';
+import { GetTaskResponse } from '../../app/api/tasks/[taskId]/route';
+import { NotFoundError, queries } from '../../utils/query';
 import { uiByTaskStatus } from '../../utils/taskStatus';
-import { createTaskDocConnection } from '../../utils/tiptap';
+import { NodeViewProps, createTaskDocConnection } from '../../utils/tiptap';
 
 const statuses: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
 
-interface Props {
-  node: Node;
-  updateAttributes: (attrs: TaskCardAttributes) => void;
-}
+type Props = NodeViewProps<TaskCardAttributes>;
+export const TaskCardNodeView = ({ editor, node, getPos }: Props) => {
+  const taskId = node.attrs.taskId;
+  const { data: task, error } = useQuery({
+    ...queries.getTask(taskId),
+  });
 
-export const TaskCardNodeView = (props: Props) => (
-  <NodeViewWrapper
-    contentEditable={false}
-    className={css({
-      my: 3,
-    })}
-  >
-    <Suspense fallback={<TaskCardSkeleton />}>
-      <TaskCardNodeViewContents {...props} />
-    </Suspense>
-  </NodeViewWrapper>
-);
+  // If task is not found, delete node
+  useEffect(() => {
+    if (error && error instanceof NotFoundError) {
+      const from = getPos();
+      const to = from + node.nodeSize;
+
+      // Because editor calls flushSync, we need to run inside microtask
+      queueMicrotask(() => {
+        editor.commands.deleteRange({ from, to });
+      });
+    }
+  }, [editor.commands, error, getPos, node.nodeSize]);
+
+  return (
+    <NodeViewWrapper
+      contentEditable={false}
+      className={css({
+        my: 3,
+      })}
+    >
+      {task ? <TaskCardNodeViewContents task={task} /> : <TaskCardSkeleton />}
+    </NodeViewWrapper>
+  );
+};
 
 const TaskCardSkeleton = () => {
   return (
@@ -54,18 +67,41 @@ const TaskCardSkeleton = () => {
   );
 };
 
-const TaskCardNodeViewContents = ({ node }: Props) => {
-  const taskId = node.attrs.taskId;
-  const { data: task, mutate } = useSWR(...swrKeyAndFetcher.getTask(taskId), {
-    suspense: true,
+const TaskCardNodeViewContents = ({
+  task: _task,
+}: {
+  task: GetTaskResponse['data'];
+}) => {
+  const queryClient = useQueryClient();
+  const {
+    mutateAsync: mutateTask,
+    isPending,
+    variables,
+  } = useMutation({
+    mutationFn: async ({
+      newTask,
+    }: {
+      newTask: GetTaskResponse['data']; // fix type
+    }) => {
+      await fetch(`/api/tasks/${newTask.taskId}`, {
+        method: 'PUT',
+        body: JSON.stringify(newTask),
+      });
+    },
+    onSettled: () =>
+      queryClient.invalidateQueries({
+        queryKey: queries.getTasks().queryKey,
+      }),
   });
+  const task = !isPending || !variables ? _task : variables?.newTask;
+
   const [isReady, setIsReady] = useState(false);
   const [titleDocExtensions, setTitleDocExtensions] = useState<Extensions>();
   const [contentDocExtensions, setContentDocExtensions] =
     useState<Extensions>();
 
   useEffect(() => {
-    const connection = createTaskDocConnection(task.data.noteId, taskId);
+    const connection = createTaskDocConnection(task.noteId, task.taskId);
 
     setTitleDocExtensions(connection.titleExtensions);
     setContentDocExtensions(connection.contentExtensions);
@@ -80,21 +116,10 @@ const TaskCardNodeViewContents = ({ node }: Props) => {
     return () => {
       // TODO: Destroy connection respecting other document connections
     };
-  }, [task.data.noteId, taskId]);
+  }, [task.noteId, task.taskId]);
 
   const onChangeStatus = async (status: TaskStatus) => {
-    mutate(
-      () =>
-        fetch(`/api/tasks/${task.data.taskId}`, {
-          method: 'PUT',
-          body: JSON.stringify({ status }),
-        }).then((res) => res.json()) as Promise<PutTaskResponse>,
-      {
-        optimisticData: {
-          data: { ...task.data, status },
-        },
-      },
-    );
+    mutateTask({ newTask: { ...task, status } });
   };
 
   return (
@@ -122,7 +147,7 @@ const TaskCardNodeViewContents = ({ node }: Props) => {
             px: 1,
           })}
         >
-          <Status status={task.data.status} onChange={onChangeStatus} />
+          <Status status={task.status} onChange={onChangeStatus} />
         </div>
         <div
           className={css({
