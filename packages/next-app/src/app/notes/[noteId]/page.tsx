@@ -6,6 +6,7 @@ import { NoteIcon } from '../../../components/icons/NoteIcon';
 import { Header } from '../../_components/Header/Header';
 import { MainContents } from '../../_components/MainContents/MainContents';
 import { CreateTaskForm } from './_components/CreateTaskForm/CreateTaskForm';
+import { NoteActionMenu } from './_components/NoteActionMenu/NoteActionMenu';
 import { NoteEditor } from './_components/NoteEditor/NoteEditor';
 import { TaskCardList } from './_components/TaskCardList/TaskCardList';
 
@@ -67,6 +68,7 @@ export default async function Page({ params }: { params: { noteId: string } }) {
             </li>
           </ol>
         }
+        actionsEl={<NoteActionMenu noteId={params.noteId} />}
       />
       <MainContents
         className={css({

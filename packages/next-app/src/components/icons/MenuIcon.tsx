@@ -1,7 +1,7 @@
 interface Props {
   className?: string;
 }
-export const PlusIcon = ({ className }: Props) => {
+export const MenuIcon = ({ className }: Props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,8 +13,9 @@ export const PlusIcon = ({ className }: Props) => {
       strokeLinejoin="round"
       className={className}
     >
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <circle cx="12" cy="12" r="1"></circle>
+      <circle cx="12" cy="5" r="1"></circle>
+      <circle cx="12" cy="19" r="1"></circle>
     </svg>
   );
 };

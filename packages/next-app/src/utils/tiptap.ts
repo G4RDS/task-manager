@@ -21,15 +21,6 @@ const getProvider = (documentName: string) => {
   cachedProviders[documentName] = new HocuspocusProvider({
     url: 'ws://localhost:8008',
     name: documentName,
-    onConnect() {
-      console.log('connect:', documentName);
-    },
-    onClose() {
-      console.log('close:', documentName);
-    },
-    onStatus(status) {
-      console.log('status:', status);
-    },
   });
   return cachedProviders[documentName];
 };
