@@ -54,7 +54,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 iconEl={<DashboardIcon />}
               />
               <NavLink href="/notes" label="Notes" iconEl={<NoteIcon />} />
-              <NavLink href="/tasks" label="Tasks" iconEl={<TaskIcon />} />
             </nav>
           </section>
           <div
