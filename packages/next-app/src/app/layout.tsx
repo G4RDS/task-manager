@@ -3,7 +3,6 @@ import { css } from '../../styled-system/css';
 import { flex, grid } from '../../styled-system/patterns';
 import { DashboardIcon } from '../components/icons/DashboardIcon';
 import { NoteIcon } from '../components/icons/NoteIcon';
-import { TaskIcon } from '../components/icons/TaskIcon';
 import { NavLink } from './_components/NavLink';
 import './index.css';
 import Providers from './providers';
