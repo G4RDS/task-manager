@@ -7,9 +7,10 @@ import ListItem from '@tiptap/extension-list-item';
 import OrderedList from '@tiptap/extension-ordered-list';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
+import { Extensions } from '@tiptap/core';
 import { mergeAttributes } from '@tiptap/react';
 
-export const noteTitleBaseExtensions = [
+export const noteTitleBaseExtensions: Extensions = [
   Document.extend({
     content: 'block',
   }),
@@ -17,7 +18,7 @@ export const noteTitleBaseExtensions = [
   Paragraph,
 ];
 
-export const noteContentBaseExtensions = [
+export const noteContentBaseExtensions: Extensions = [
   Document,
   Text,
   Heading.extend({
@@ -48,7 +49,7 @@ export const noteContentBaseExtensions = [
   ListItem,
 ];
 
-export const taskTitleBaseExtensions = [
+export const taskTitleBaseExtensions: Extensions = [
   Document.extend({
     content: 'block',
   }),
@@ -56,7 +57,7 @@ export const taskTitleBaseExtensions = [
   Paragraph,
 ];
 
-export const taskContentBaseExtensions = [
+export const taskContentBaseExtensions: Extensions = [
   Document,
   Text,
   BulletList,

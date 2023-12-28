@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { TaskStatus } from 'database/src/utils/prisma';
+import { TaskStatus } from 'database';
 import { z } from 'zod';
 import { DoneIcon } from '../components/icons/taskStatus/DoneIcon';
 import { InProgressIcon } from '../components/icons/taskStatus/InProgressIcon';

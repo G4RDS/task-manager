@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { NextRequest } from 'next/server';
 import { prisma } from 'database';
-import { Note, Task } from 'database/src/utils/prisma';
+import { Note, Task } from 'database';
 import { z } from 'zod';
 import { taskStatusSchema } from '../../../../utils/taskStatus';
 

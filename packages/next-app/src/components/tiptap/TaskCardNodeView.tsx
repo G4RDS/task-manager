@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NodeViewWrapper } from '@tiptap/react';
 import { EditorContent, Extensions, useEditor } from '@tiptap/react';
 import { Command, CommandInput, CommandItem, CommandList } from 'cmdk';
-import { TaskStatus } from 'database/src/utils/prisma';
+import { TaskStatus } from 'database';
 import { TaskCardAttributes } from 'tiptap-shared';
 import { css } from '../../../styled-system/css';
 import { flex } from '../../../styled-system/patterns';

@@ -7,7 +7,7 @@ import {
   DropdownMenuPortal,
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu';
-import { Task } from 'database/src/utils/prisma';
+import { Task } from 'database';
 import { css } from '../../../../../../styled-system/css';
 import { flex, grid } from '../../../../../../styled-system/patterns';
 import { MenuIcon } from '../../../../../components/icons/MenuIcon';
