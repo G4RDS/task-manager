@@ -9,7 +9,7 @@ import { Editor, FloatingMenu } from '@tiptap/react';
 import { Command, CommandInput, CommandItem, CommandList } from 'cmdk';
 import { css } from '../../../styled-system/css';
 import { flex } from '../../../styled-system/patterns';
-import { PostTaskResponse } from '../../app/api/tasks/route';
+import { PostTaskResponse } from '../../app/api/tasks/type';
 import { PlusIcon } from '../icons/PlusIcon';
 import { TaskIcon } from '../icons/TaskIcon';
 

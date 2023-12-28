@@ -14,7 +14,7 @@ import { TaskStatus } from 'database';
 import { TaskCardAttributes } from 'tiptap-shared';
 import { css } from '../../../styled-system/css';
 import { flex } from '../../../styled-system/patterns';
-import { GetTaskResponse } from '../../app/api/tasks/[taskId]/route';
+import { GetTaskResponse } from '../../app/api/tasks/[taskId]/type';
 import { NotFoundError, queries } from '../../utils/query';
 import { uiByTaskStatus } from '../../utils/taskStatus';
 import { NodeViewProps, createTaskDocConnection } from '../../utils/tiptap';

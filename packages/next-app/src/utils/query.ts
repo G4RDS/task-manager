@@ -1,6 +1,6 @@
 import { UndefinedInitialDataOptions } from '@tanstack/react-query';
-import { getTaskResponseSchema } from '../app/api/tasks/[taskId]/route';
-import { getTasksResponseSchema } from '../app/api/tasks/route';
+import { getTaskResponseSchema } from '../app/api/tasks/[taskId]/type';
+import { getTasksResponseSchema } from '../app/api/tasks/type';
 
 export class NotFoundError extends Error {
   constructor(message: string) {

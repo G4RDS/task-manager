@@ -36,7 +36,7 @@ import { token } from '../../../../styled-system/tokens';
 import { GrabDotsIcon } from '../../../components/icons/GrabDotsIcon';
 import { queries } from '../../../utils/query';
 import { uiByTaskStatus } from '../../../utils/taskStatus';
-import { getTasksResponseSchema } from '../../api/tasks/route';
+import { getTasksResponseSchema } from '../../api/tasks/type';
 
 type Task = z.infer<typeof getTasksResponseSchema>['data'][number];
 
