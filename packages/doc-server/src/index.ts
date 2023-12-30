@@ -51,7 +51,7 @@ const getYdocFromTitleText = (text: string): Y.Doc => {
 };
 
 const server = new Hocuspocus({
-  port: 8008,
+  port: Number(process.env.PORT) || 8008,
   onRequest: async (data) => {
     console.log('request:', data);
   },
