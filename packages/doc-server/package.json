@@ -7,11 +7,11 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "tiptap-shared": "workspace:*",
+    "@google-cloud/storage": "^7.7.0",
     "@hocuspocus/server": "^2.8.1",
     "@hocuspocus/transformer": "^2.8.1",
-    "@vercel/blob": "^0.14.1",
     "database": "workspace:*",
+    "tiptap-shared": "workspace:*",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.9",
     "zod": "^3.22.4"

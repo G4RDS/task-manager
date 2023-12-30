@@ -1,10 +1,12 @@
+import { Storage } from '@google-cloud/storage';
 import { Hocuspocus } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
-import { put } from '@vercel/blob';
 import { prisma } from 'database';
 import { noteTitleBaseExtensions } from 'tiptap-shared';
 import * as Y from 'yjs';
 import { z } from 'zod';
+
+const storage = new Storage().bucket('g4rds-task-manager-documents');
 
 const docTypeSchema = z.literal('note');
 
@@ -73,9 +75,10 @@ const server = new Hocuspocus({
       throw new Error('Note not found');
     }
 
-    if (doc.documentUrl) {
-      const res = await fetch(doc.documentUrl);
-      const buf = await res.arrayBuffer();
+    const file = storage.file(data.documentName);
+
+    if ((await file.exists())[0]) {
+      const buf = (await file.download())[0];
       Y.applyUpdateV2(data.document, new Uint8Array(buf));
     } else if (doc.title) {
       data.document.merge(getYdocFromTitleText(doc.title));
@@ -86,17 +89,13 @@ const server = new Hocuspocus({
   onStoreDocument: async (data) => {
     const { id } = convertFromDocumentName(data.documentName);
 
-    const buf = Y.encodeStateAsUpdateV2(data.document).buffer as ArrayBuffer;
-    const res = await put(data.documentName, buf, {
-      access: 'public',
-      cacheControlMaxAge: 0,
-    });
+    const buf = Buffer.from(Y.encodeStateAsUpdateV2(data.document).buffer);
+    await storage.file(data.documentName).save(buf);
 
     await prisma.note.update({
       where: { noteId: id },
       data: {
         title: getTitleTextFromYdoc(data.document),
-        documentUrl: res.url,
       },
     });
   },
