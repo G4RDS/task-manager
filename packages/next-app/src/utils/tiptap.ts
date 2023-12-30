@@ -28,7 +28,7 @@ const getProvider = (documentName: string) => {
     return cachedProviders[documentName];
   }
   cachedProviders[documentName] = new HocuspocusProvider({
-    url: 'ws://localhost:8008',
+    url: process.env.NEXT_PUBLIC_DOC_SERVER_URL as string,
     name: documentName,
   });
   return cachedProviders[documentName];
