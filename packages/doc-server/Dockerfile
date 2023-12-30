@@ -1,4 +1,5 @@
 FROM oven/bun:1.0.20-slim AS base
+RUN apt-get update && apt-get install -y ca-certificates
 
 WORKDIR /usr/src/app
 COPY . .
