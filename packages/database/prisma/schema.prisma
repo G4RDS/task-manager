@@ -9,6 +9,18 @@ datasource db {
   relationMode = "prisma"
 }
 
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  accounts Account[]
+  sessions Session[]
+  Note     Note[]
+}
+
 model Account {
   id                String  @id @default(cuid())
   type              String
@@ -40,17 +52,6 @@ model Session {
   @@index([userId])
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-
-  accounts Account[]
-  sessions Session[]
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -66,7 +67,11 @@ model Note {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  Task Task[]
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  Task     Task[]
+
+  @@index([authorId])
 }
 
 enum TaskStatus {
