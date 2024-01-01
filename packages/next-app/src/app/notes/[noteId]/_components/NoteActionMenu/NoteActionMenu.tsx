@@ -64,6 +64,7 @@ export const NoteActionMenu = ({ noteId }: Props) => {
               px: 2,
               borderRadius: '4px',
               cursor: 'pointer',
+              fontSize: '14px',
               '& svg': {
                 w: 4,
                 h: 4,
