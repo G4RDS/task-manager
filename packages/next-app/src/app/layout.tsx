@@ -3,7 +3,7 @@ import { css } from '../../styled-system/css';
 import { flex, grid } from '../../styled-system/patterns';
 import { DashboardIcon } from '../components/icons/DashboardIcon';
 import { NoteIcon } from '../components/icons/NoteIcon';
-import { auth } from '../utils/nextAuth';
+import { auth, signIn } from '../utils/nextAuth';
 import { NavLink } from './_components/NavLink';
 import './index.css';
 import Providers from './providers';
@@ -13,6 +13,12 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
+  const session = await auth();
+  if (!session) {
+    await signIn();
+    return null;
+  }
+
   return (
     <html lang="ja-JP">
       <head>
