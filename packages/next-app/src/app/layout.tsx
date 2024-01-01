@@ -3,11 +3,16 @@ import { css } from '../../styled-system/css';
 import { flex, grid } from '../../styled-system/patterns';
 import { DashboardIcon } from '../components/icons/DashboardIcon';
 import { NoteIcon } from '../components/icons/NoteIcon';
+import { auth } from '../utils/nextAuth';
 import { NavLink } from './_components/NavLink';
 import './index.css';
 import Providers from './providers';
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html lang="ja-JP">
       <head>
@@ -65,7 +70,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               boxShadow: 'md',
             })}
           >
-            <Providers>{children}</Providers>
+            <Providers session={await auth()}>{children}</Providers>
           </div>
         </div>
       </body>
