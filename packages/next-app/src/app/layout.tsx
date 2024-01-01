@@ -5,6 +5,7 @@ import { DashboardIcon } from '../components/icons/DashboardIcon';
 import { NoteIcon } from '../components/icons/NoteIcon';
 import { auth, signIn } from '../utils/nextAuth';
 import { NavLink } from './_components/NavLink';
+import { UserMenu } from './_components/UserMenu';
 import './index.css';
 import Providers from './providers';
 
@@ -39,10 +40,12 @@ export default async function RootLayout({
             bgColor: 'gray.100',
           })}
         >
-          <section className={css({ px: 4 })}>
+          <section className={flex({ flexDirection: 'column', px: 4 })}>
             <div
               className={flex({
+                flex: '0 0 auto',
                 alignItems: 'center',
+                justifyContent: 'space-between',
                 h: 16,
                 px: 2,
                 borderBottom: '1px solid token(colors.gray.200)',
@@ -56,8 +59,23 @@ export default async function RootLayout({
               >
                 Supertasks
               </span>
+              {session.user && (
+                <UserMenu
+                  user={session.user}
+                  className={css({
+                    flex: '0 0 auto',
+                  })}
+                />
+              )}
             </div>
-            <nav className={flex({ flexDir: 'column', rowGap: 2, mt: 4 })}>
+            <nav
+              className={flex({
+                flex: '1 1 0',
+                flexDir: 'column',
+                rowGap: 2,
+                mt: 4,
+              })}
+            >
               <NavLink
                 href="/dashboard"
                 label="Dashboard"

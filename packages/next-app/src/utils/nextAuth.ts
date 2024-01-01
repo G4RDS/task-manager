@@ -8,6 +8,7 @@ export const {
   handlers: { GET, POST },
   auth,
   signIn,
+  signOut,
 } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [GoogleProvider],
