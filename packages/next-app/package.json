@@ -10,7 +10,7 @@
     "tsc:ci": "tsc --noEmit",
     "eslint:ci": "eslint src/**/*.ts{,x}",
     "prettier:ci": "prettier --check src",
-    "prepare": "panda codegen"
+    "prepare": "panda codegen $(if [[ ! $(pwd) =~ /packages/next-app$ ]]; then echo '--cwd ./packages/next-app'; fi)"
   },
   "dependencies": {
     "tiptap-shared": "workspace:*",
