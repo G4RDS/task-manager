@@ -6,7 +6,7 @@ import { noteTitleBaseExtensions } from 'tiptap-shared';
 import * as Y from 'yjs';
 import { z } from 'zod';
 
-const storage = new Storage().bucket('g4rds-task-manager-documents');
+const storage = new Storage().bucket(process.env.GCS_BUCKET_NAME as string);
 
 const docTypeSchema = z.literal('note');
 
