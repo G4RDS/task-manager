@@ -4,7 +4,8 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "start": "bun run src/index.ts"
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outdir=dist",
+    "dev": "nodemon --exec 'npm run build && node dist/index.cjs' --watch src -e ts"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
@@ -17,6 +18,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "esbuild": "^0.19.11",
+    "nodemon": "^3.0.2",
     "tsconfig": "workspace:*",
     "typescript": "^5.2.2"
   }
