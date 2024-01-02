@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { prisma } from 'database';
 import { css } from '../../../../styled-system/css';
 import { flex } from '../../../../styled-system/patterns';
-import { getUser } from '../../../utils/nextAuth';
+import { getUserOrThrow } from '../../../utils/nextAuth';
 
 export const NoteCards = async () => {
-  const user = await getUser();
+  const user = await getUserOrThrow();
 
   const notes = await prisma.note.findMany({
     select: {

@@ -1,12 +1,13 @@
+import { NextRequest } from 'next/server';
 import { prisma } from 'database';
 import { generateKeyBetween } from 'fractional-indexing';
-import { auth } from '../../../utils/nextAuth';
+import { getUser } from '../../../utils/nextAuth';
 import { getTasksResponseSchema, postTaskRequestSchema } from './type';
 
 export const dynamic = 'force-dynamic';
 
-export const GET = auth(async (req) => {
-  const user = req.auth?.user;
+export const GET = async () => {
+  const user = await getUser();
   if (!user) {
     return new Response('Unauthorized', { status: 401 });
   }
@@ -39,10 +40,10 @@ export const GET = auth(async (req) => {
   });
 
   return Response.json(getTasksResponseSchema.parse({ data: tasks }));
-});
+};
 
-export const POST = auth(async (req) => {
-  const user = req.auth?.user;
+export const POST = async (req: NextRequest) => {
+  const user = await getUser();
   if (!user) {
     return new Response('Unauthorized', { status: 401 });
   }
@@ -80,4 +81,4 @@ export const POST = auth(async (req) => {
   });
 
   return Response.json({ data: task });
-});
+};

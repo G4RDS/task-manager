@@ -3,13 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { prisma } from 'database';
-import { getUser } from '../../../../utils/nextAuth';
+import { getUserOrThrow } from '../../../../utils/nextAuth';
 
 export const createNoteAndRedirect = async (
   state: number,
   formData: FormData,
 ) => {
-  const user = await getUser();
+  const user = await getUserOrThrow();
 
   const formDataTitle = formData.get('title');
   if (typeof formDataTitle !== 'string' || formDataTitle === '') {

@@ -3,10 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from 'database';
 import { generateKeyBetween } from 'fractional-indexing';
-import { getUser } from '../../../../../utils/nextAuth';
+import { getUserOrThrow } from '../../../../../utils/nextAuth';
 
 export const createTask = async (state: number, formData: FormData) => {
-  const user = await getUser();
+  const user = await getUserOrThrow();
 
   const formDataNoteId = formData.get('noteId');
   if (typeof formDataNoteId !== 'string' || formDataNoteId === '') {

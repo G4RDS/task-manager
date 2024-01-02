@@ -4,7 +4,7 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 import { prisma } from 'database';
-import { getUser } from '../../utils/nextAuth';
+import { getUserOrThrow } from '../../utils/nextAuth';
 import { queries } from '../../utils/query';
 import { Header } from '../_components/Header/Header';
 import { MainContents } from '../_components/MainContents/MainContents';
@@ -13,7 +13,7 @@ import { OrderableTaskList } from './_components/OrderableTaskList';
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-  const user = await getUser();
+  const user = await getUserOrThrow();
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({

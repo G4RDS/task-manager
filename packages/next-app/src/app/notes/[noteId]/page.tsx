@@ -3,7 +3,7 @@ import { prisma } from 'database';
 import { css } from '../../../../styled-system/css';
 import { flex } from '../../../../styled-system/patterns';
 import { NoteIcon } from '../../../components/icons/NoteIcon';
-import { getUser } from '../../../utils/nextAuth';
+import { getUserOrThrow } from '../../../utils/nextAuth';
 import { Header } from '../../_components/Header/Header';
 import { MainContents } from '../../_components/MainContents/MainContents';
 import { CreateTaskForm } from './_components/CreateTaskForm/CreateTaskForm';
@@ -14,7 +14,7 @@ import { TaskCardList } from './_components/TaskCardList/TaskCardList';
 export const dynamic = 'force-dynamic';
 
 export default async function Page({ params }: { params: { noteId: string } }) {
-  const user = await getUser();
+  const user = await getUserOrThrow();
   const note = await prisma.note.findUnique({
     select: {
       title: true,

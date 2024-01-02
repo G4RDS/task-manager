@@ -1,13 +1,13 @@
 import { prisma } from 'database';
 import { flex } from '../../../../../../styled-system/patterns';
-import { getUser } from '../../../../../utils/nextAuth';
+import { getUserOrThrow } from '../../../../../utils/nextAuth';
 import { TaskCard } from './TaskCard';
 
 interface Props {
   noteId: string;
 }
 export const TaskCardList = async ({ noteId }: Props) => {
-  const user = await getUser();
+  const user = await getUserOrThrow();
 
   const tasks = await prisma.task.findMany({
     select: {

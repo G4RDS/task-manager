@@ -66,22 +66,22 @@ const server = new Hocuspocus({
   onLoadDocument: async (data): Promise<Y.Doc> => {
     const { id } = convertFromDocumentName(data.documentName);
 
-    const doc = await prisma.note.findUnique({
+    const note = await prisma.note.findUnique({
       select: { title: true, documentUrl: true },
       where: { noteId: id },
     });
 
-    if (!doc) {
+    if (!note) {
       throw new Error('Note not found');
     }
 
-    const file = storage.file(data.documentName);
+    const file = await storage.file(data.documentName);
 
     if ((await file.exists())[0]) {
       const buf = (await file.download())[0];
       Y.applyUpdateV2(data.document, new Uint8Array(buf));
-    } else if (doc.title) {
-      data.document.merge(getYdocFromTitleText(doc.title));
+    } else if (note.title) {
+      data.document.merge(getYdocFromTitleText(note.title));
     }
 
     return data.document;

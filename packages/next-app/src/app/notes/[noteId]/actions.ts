@@ -2,10 +2,10 @@
 
 import { redirect } from 'next/navigation';
 import { prisma } from 'database';
-import { getUser } from '../../../utils/nextAuth';
+import { getUserOrThrow } from '../../../utils/nextAuth';
 
 export const deleteNoteAndRedirect = async (noteId: string) => {
-  const user = await getUser();
+  const user = await getUserOrThrow();
 
   await prisma.note.delete({
     where: {
@@ -18,7 +18,7 @@ export const deleteNoteAndRedirect = async (noteId: string) => {
 };
 
 export const deleteTask = async (taskId: string) => {
-  const user = await getUser();
+  const user = await getUserOrThrow();
 
   await prisma.task.delete({
     where: {
