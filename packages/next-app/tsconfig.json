@@ -4,6 +4,8 @@
   "compilerOptions": {
     "composite": false,
     "declaration": false,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "target": "ES2020",
