@@ -2,8 +2,11 @@ import Link from 'next/link';
 import { prisma } from 'database';
 import { css } from '../../../../styled-system/css';
 import { flex } from '../../../../styled-system/patterns';
+import { getUser } from '../../../utils/nextAuth';
 
 export const NoteCards = async () => {
+  const user = await getUser();
+
   const notes = await prisma.note.findMany({
     select: {
       noteId: true,
@@ -11,6 +14,9 @@ export const NoteCards = async () => {
     },
     orderBy: {
       updatedAt: 'desc',
+    },
+    where: {
+      authorId: user.id,
     },
   });
 
