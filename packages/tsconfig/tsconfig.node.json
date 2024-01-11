@@ -1,6 +1,12 @@
 {
   "extends": "./tsconfig.base",
   "compilerOptions": {
+    "composite": true,
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
     "types": ["node"]
   }
 }
