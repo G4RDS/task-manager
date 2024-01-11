@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.ts",
-  "scripts": {
-    "start": "bun run src/index.ts"
-  },
+  "scripts": {},
   "dependencies": {
     "@tiptap/core": "^2.1.13",
     "@tiptap/extension-bold": "^2.1.13",
@@ -23,7 +21,7 @@
     "@tiptap/react": "^2.1.13"
   },
   "devDependencies": {
-    "tsconfig": "workspace:*",
+    "tsconfig": "^1.0.0",
     "typescript": "^5.2.2"
   }
 }

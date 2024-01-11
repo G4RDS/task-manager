@@ -1,23 +1,28 @@
-FROM oven/bun:1.0.20-slim AS base
+FROM node:20.10.0-bullseye-slim  AS base
 RUN apt-get update && apt-get install -y ca-certificates
 
 WORKDIR /usr/src/app
 COPY . .
 
 WORKDIR /usr/src/app/packages/doc-server
-RUN bun install
+RUN npm ci
 
-# Run prisma generate in Node.js environment
-FROM node:20.10.0-bullseye-slim AS prisma
+# Build
+FROM node:20.10.0-bullseye-slim AS build
 COPY --from=base /usr/src/app /usr/src/app
+
 WORKDIR /usr/src/app/packages/database
 RUN npx prisma generate
 
-FROM base AS build
+WORKDIR /usr/src/app/packages/doc-server
+RUN npm run build
 
-COPY --from=prisma /usr/src/app/node_modules/.prisma /usr/src/app/node_modules/.prisma
+# App
+FROM node:20.10.0-bullseye-slim AS app
+COPY --from=build /usr/src/app/packages/doc-server/dist /usr/src/app
+WORKDIR /usr/src/app
 
-USER bun
+USER node
 EXPOSE 8080/tcp
 ENV PORT=8080
-ENTRYPOINT [ "bun", "run", "start" ]
+ENTRYPOINT [ "node", "index.cjs" ]
