@@ -4,6 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "migrate:dev": "prisma migrate dev",
+    "studio": "prisma studio",
     "postinstall": "prisma generate"
   },
   "dependencies": {
