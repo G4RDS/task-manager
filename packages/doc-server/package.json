@@ -4,8 +4,10 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outdir=dist",
-    "dev": "nodemon --exec 'npm run build && node dist/index.cjs' --watch src -e ts"
+    "build": "rm -rf dist && node ./tools/build.js",
+    "build:prod": "PHASE=prod npm run build",
+    "start": "node dist/index.mjs",
+    "dev": "nodemon --exec 'PHASE=local npm run build && npm run start' --watch src -e ts"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
@@ -18,6 +20,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "dotenv": "^16.3.1",
     "esbuild": "^0.19.11",
     "nodemon": "^3.0.2",
     "tsconfig": "^1.0.0",
