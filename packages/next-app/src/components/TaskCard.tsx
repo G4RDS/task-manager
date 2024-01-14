@@ -50,10 +50,14 @@ export const TaskCard = ({
         body: JSON.stringify(newTask),
       });
     },
-    onSettled: () =>
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: queries.getTasks().queryKey,
-      }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.getTasksForNote(task.noteId).queryKey,
+      });
+    },
   });
   const task = !isPending || !variables ? _task : variables?.newTask;
 
