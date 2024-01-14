@@ -4,10 +4,11 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "build": "rm -rf dist && node ./tools/build.js",
+    "build": "rm -rf dist && node ./tools/build.mjs",
     "build:prod": "PHASE=prod npm run build",
     "start": "node dist/index.mjs",
-    "dev": "nodemon --exec 'PHASE=local npm run build && npm run start' --watch src -e ts"
+    "dev": "nodemon --exec 'PHASE=local npm run build && npm run start' --watch src -e ts",
+    "deploy": " node --loader ts-node/esm tools/deploy.ts"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
@@ -23,7 +24,9 @@
     "dotenv": "^16.3.1",
     "esbuild": "^0.19.11",
     "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
     "tsconfig": "^1.0.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "zx": "^7.2.3"
   }
 }
