@@ -1,7 +1,7 @@
 import { Storage } from '@google-cloud/storage';
 import { Hocuspocus } from '@hocuspocus/server';
 import { TiptapTransformer } from '@hocuspocus/transformer';
-import { prisma } from 'database';
+import { Prisma, prisma } from 'database';
 import { noteTitleBaseExtensions } from 'tiptap-shared';
 import * as Y from 'yjs';
 import { z } from 'zod';
@@ -92,12 +92,23 @@ const server = new Hocuspocus({
     const buf = Buffer.from(Y.encodeStateAsUpdateV2(data.document).buffer);
     await storage.file(data.documentName).save(buf);
 
-    await prisma.note.update({
-      where: { noteId: id },
-      data: {
-        title: getTitleTextFromYdoc(data.document),
-      },
-    });
+    try {
+      await prisma.note.update({
+        where: { noteId: id },
+        data: {
+          title: getTitleTextFromYdoc(data.document),
+        },
+      });
+    } catch (err) {
+      if (!(err instanceof Prisma.PrismaClientKnownRequestError)) {
+        throw err;
+      }
+      if (err.code === 'P2025') {
+        // user has deleted the note
+        return;
+      }
+      throw err;
+    }
   },
   onDestroy: async () => {
     await prisma.$disconnect();
