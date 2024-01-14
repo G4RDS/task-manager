@@ -10,6 +10,10 @@ export const getTasksForNoteResponseSchema = z.object({
       order: z.string(),
       createdAt: z.coerce.date(),
       updatedAt: z.coerce.date(),
+      noteId: z.string().uuid(),
     }),
   ),
 });
+export type GetTasksForNoteResponse = z.infer<
+  typeof getTasksForNoteResponseSchema
+>;

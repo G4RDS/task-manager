@@ -10,6 +10,7 @@ export const getTasksForNote = async (userId: string, noteId: string) => {
       order: true,
       createdAt: true,
       updatedAt: true,
+      noteId: true,
     },
     where: {
       noteId,
