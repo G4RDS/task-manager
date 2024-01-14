@@ -29,16 +29,15 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { generateKeyBetween } from 'fractional-indexing';
-import { z } from 'zod';
 import { css, cx } from '../../../../styled-system/css';
 import { flex, grid } from '../../../../styled-system/patterns';
 import { token } from '../../../../styled-system/tokens';
 import { GrabDotsIcon } from '../../../components/icons/GrabDotsIcon';
 import { queries } from '../../../utils/query';
 import { uiByTaskStatus } from '../../../utils/taskStatus';
-import { getTasksResponseSchema } from '../../api/tasks/type';
+import { GetTasksResponse } from '../../api/tasks/type';
 
-type Task = z.infer<typeof getTasksResponseSchema>['data'][number];
+type Task = GetTasksResponse['data'][number];
 
 const thisYear = new Date().getFullYear();
 

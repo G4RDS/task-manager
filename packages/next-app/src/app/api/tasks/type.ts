@@ -20,6 +20,7 @@ export const getTasksResponseSchema = z.object({
     }),
   ),
 });
+export type GetTasksResponse = z.infer<typeof getTasksResponseSchema>;
 
 export const postTaskRequestSchema = z.object({
   noteId: z.string().uuid(),
