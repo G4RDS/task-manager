@@ -12,14 +12,14 @@ import { flex } from '../../../../../../styled-system/patterns';
 import { MenuIcon } from '../../../../../components/icons/MenuIcon';
 import { TrashIcon } from '../../../../../components/icons/TrashIcon';
 import { dropdownMenuContentStyle } from '../../../../../styles/dropdownMenu';
-import { deleteNoteAndRedirect } from '../../actions';
+import { deleteNoteAction } from './actions';
 
 interface Props {
   noteId: string;
 }
 export const NoteActionMenu = ({ noteId }: Props) => {
   const onDelete = async () => {
-    await deleteNoteAndRedirect(noteId);
+    await deleteNoteAction(noteId);
   };
 
   return (

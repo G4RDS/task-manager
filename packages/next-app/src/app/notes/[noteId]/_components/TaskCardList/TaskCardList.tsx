@@ -2,8 +2,8 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { flex } from '../../../../../../styled-system/patterns';
+import { TaskCard } from '../../../../../components/TaskCard/TaskCard';
 import { queries } from '../../../../../utils/query';
-import { TaskCard } from './../../../../../components/TaskCard';
 
 interface Props {
   noteId: string;

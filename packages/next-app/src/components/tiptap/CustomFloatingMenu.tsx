@@ -10,10 +10,10 @@ import { Editor, FloatingMenu } from '@tiptap/react';
 import { Command, CommandInput, CommandItem, CommandList } from 'cmdk';
 import { css } from '../../../styled-system/css';
 import { flex } from '../../../styled-system/patterns';
-import { PostTaskResponse } from '../../app/api/tasks/type';
 import { queries } from '../../utils/query';
 import { PlusIcon } from '../icons/PlusIcon';
 import { TaskIcon } from '../icons/TaskIcon';
+import { createTaskAction } from './actions';
 
 export const CustomFloatingMenu = ({
   editor,
@@ -27,20 +27,14 @@ export const CustomFloatingMenu = ({
 
   const onSelectNewTask = async () => {
     setIsOpen(false);
-    const response = await fetch('/api/tasks', {
-      method: 'POST',
-      body: JSON.stringify({
-        noteId,
-      }),
-    });
-    const task = (await response.json()) as PostTaskResponse;
+    const task = await createTaskAction(noteId);
     queryClient.invalidateQueries({
       queryKey: queries.getTasks().queryKey,
     });
     queryClient.invalidateQueries({
-      queryKey: queries.getTasksForNote(task.data.noteId).queryKey,
+      queryKey: queries.getTasksForNote(task.noteId).queryKey,
     });
-    editor.commands.setTaskCard(task.data.taskId);
+    editor.commands.setTaskCard(task.taskId);
   };
 
   return (

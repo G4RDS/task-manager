@@ -1,11 +1,10 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { prisma } from 'database';
-import { generateKeyBetween } from 'fractional-indexing';
+import { createTask } from '../../../../../serverUtils/task';
 import { getUserOrThrow } from '../../../../../utils/nextAuth';
 
-export const createTask = async (state: number, formData: FormData) => {
+export const createTaskAction = async (formData: FormData) => {
   const user = await getUserOrThrow();
 
   const formDataNoteId = formData.get('noteId');
@@ -24,29 +23,5 @@ export const createTask = async (state: number, formData: FormData) => {
     throw new Error('Note not found');
   }
 
-  const firstTask = await prisma.task.findFirst({
-    select: {
-      order: true,
-    },
-    where: {
-      note: {
-        authorId: user.id,
-      },
-    },
-    orderBy: {
-      order: 'asc',
-    },
-  });
-  const minimumOrder = generateKeyBetween(undefined, firstTask?.order);
-  await prisma.task.create({
-    data: {
-      noteId,
-      title,
-      order: minimumOrder,
-    },
-  });
-
-  revalidatePath(`/notes/${noteId}`);
-
-  return ++state;
+  await createTask(user.id, noteId, title);
 };

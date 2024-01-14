@@ -5,7 +5,7 @@ import { TaskCardAttributes } from 'tiptap-shared';
 import { css } from '../../../styled-system/css';
 import { NotFoundError, queries } from '../../utils/query';
 import { NodeViewProps } from '../../utils/tiptap';
-import { TaskCard } from '../TaskCard';
+import { TaskCard } from '../TaskCard/TaskCard';
 
 type Props = NodeViewProps<TaskCardAttributes>;
 export const TaskCardNodeView = ({ editor, node, getPos }: Props) => {

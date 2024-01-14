@@ -1,14 +1,10 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { prisma } from 'database';
+import { createNote } from '../../../../serverUtils/note';
 import { getUserOrThrow } from '../../../../utils/nextAuth';
 
-export const createNoteAndRedirect = async (
-  state: number,
-  formData: FormData,
-) => {
+export const createNoteAndRedirectAction = async (formData: FormData) => {
   const user = await getUserOrThrow();
 
   const formDataTitle = formData.get('title');
@@ -16,16 +12,7 @@ export const createNoteAndRedirect = async (
     throw new Error('Title is invalid');
   }
 
-  const title = formDataTitle;
-  const note = await prisma.note.create({
-    data: {
-      title,
-      authorId: user.id,
-    },
-  });
+  const note = await createNote(user.id, formDataTitle);
 
-  revalidatePath('/');
   redirect(`/notes/${note.noteId}`);
-
-  return ++state;
 };

@@ -1,13 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useFormState } from 'react-dom';
 import { css } from '../../../../../styled-system/css';
-import { createNoteAndRedirect } from './action';
+import { createNoteAndRedirectAction } from './action';
 
 export const CreateNoteForm = () => {
   const [isActive, setIsActive] = useState(false);
-  const [state, formAction] = useFormState(createNoteAndRedirect, 1);
 
   if (!isActive) {
     return (
@@ -35,10 +33,7 @@ export const CreateNoteForm = () => {
 
   return (
     <form
-      action={formAction}
-      onSubmit={() => {
-        setIsActive(false);
-      }}
+      action={createNoteAndRedirectAction}
       className={css({
         border: '1px dashed',
         borderColor: 'gray.200',
@@ -47,12 +42,12 @@ export const CreateNoteForm = () => {
         color: 'gray.700',
         animation: 'boxShadowAppearMd 150ms token(easings.easeOut) forwards',
       })}
-      key={state}
     >
       <input
         type="text"
         name="title"
         autoFocus={true}
+        required={true}
         onBlur={() => {
           setIsActive(false);
         }}

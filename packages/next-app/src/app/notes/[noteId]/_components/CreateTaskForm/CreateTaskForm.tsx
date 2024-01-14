@@ -1,16 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useFormState } from 'react-dom';
 import { css } from '../../../../../../styled-system/css';
-import { createTask } from './action';
+import { createTaskAction } from './action';
 
 interface Props {
   noteId: string;
 }
 export const CreateTaskForm = ({ noteId }: Props) => {
   const [isActive, setIsActive] = useState(false);
-  const [state, formAction] = useFormState(createTask, 1);
 
   if (!isActive) {
     return (
@@ -38,7 +36,7 @@ export const CreateTaskForm = ({ noteId }: Props) => {
 
   return (
     <form
-      action={formAction}
+      action={createTaskAction}
       onSubmit={() => {
         setIsActive(false);
       }}
@@ -50,13 +48,13 @@ export const CreateTaskForm = ({ noteId }: Props) => {
         color: 'gray.700',
         animation: 'boxShadowAppearMd 150ms token(easings.easeOut) forwards',
       })}
-      key={state}
     >
       <input type="hidden" name="noteId" value={noteId} />
       <input
         type="text"
         name="title"
         autoFocus={true}
+        required={true}
         onBlur={() => {
           setIsActive(false);
         }}

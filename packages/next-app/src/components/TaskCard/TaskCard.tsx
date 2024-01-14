@@ -17,15 +17,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EditorContent, Extensions, useEditor } from '@tiptap/react';
 import { Command, CommandInput, CommandItem, CommandList } from 'cmdk';
 import { TaskStatus } from 'database';
-import { css } from '../../styled-system/css';
-import { flex } from '../../styled-system/patterns';
-import { GetTaskResponse } from '../app/api/tasks/[taskId]/type';
-import { deleteTask } from '../app/notes/[noteId]/actions';
-import { queries } from '../utils/query';
-import { uiByTaskStatus } from '../utils/taskStatus';
-import { createTaskDocConnection } from '../utils/tiptap';
-import { MenuIcon } from './icons/MenuIcon';
-import { TrashIcon } from './icons/TrashIcon';
+import { css } from '../../../styled-system/css';
+import { flex } from '../../../styled-system/patterns';
+import { GetTaskResponse } from '../../app/api/tasks/[taskId]/type';
+import { queries } from '../../utils/query';
+import { uiByTaskStatus } from '../../utils/taskStatus';
+import { createTaskDocConnection } from '../../utils/tiptap';
+import { MenuIcon } from '../icons/MenuIcon';
+import { TrashIcon } from '../icons/TrashIcon';
+import { deleteTaskAction } from './actions';
 
 const statuses: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
 
@@ -254,7 +254,7 @@ const Status = ({
 
 const ActionMenu = ({ taskId }: { taskId: string }) => {
   const onDelete = async () => {
-    await deleteTask(taskId);
+    await deleteTaskAction(taskId);
   };
 
   return (
