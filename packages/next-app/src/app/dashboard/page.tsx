@@ -3,11 +3,11 @@ import {
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query';
-import { prisma } from 'database';
 import { getUserOrThrow } from '../../utils/nextAuth';
 import { queries } from '../../utils/query';
 import { Header } from '../_components/Header/Header';
 import { MainContents } from '../_components/MainContents/MainContents';
+import { getTasks } from '../api/tasks/query';
 import { OrderableTaskList } from './_components/OrderableTaskList';
 
 export const dynamic = 'force-dynamic';
@@ -18,33 +18,7 @@ export default async function Page() {
 
   await queryClient.prefetchQuery({
     queryKey: queries.getTasks().queryKey,
-    queryFn: () =>
-      prisma.task.findMany({
-        select: {
-          taskId: true,
-          title: true,
-          status: true,
-          order: true,
-          createdAt: true,
-          updatedAt: true,
-          note: {
-            select: {
-              noteId: true,
-              title: true,
-              createdAt: true,
-              updatedAt: true,
-            },
-          },
-        },
-        where: {
-          note: {
-            authorId: user.id,
-          },
-        },
-        orderBy: {
-          order: 'asc',
-        },
-      }),
+    queryFn: async () => (await getTasks(user.id)).data,
   });
 
   return (

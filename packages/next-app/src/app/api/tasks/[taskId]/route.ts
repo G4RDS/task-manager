@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation';
 import { NextRequest } from 'next/server';
 import { prisma } from 'database';
 import { getUser } from '../../../../utils/nextAuth';
-import { getTaskResponseSchema, putTaskRequestSchema } from './type';
+import { getTask } from './query';
+import { putTaskRequestSchema } from './type';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,29 +16,11 @@ export const GET = async (
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const task = await prisma.task.findUnique({
-    select: {
-      taskId: true,
-      title: true,
-      status: true,
-      order: true,
-      createdAt: true,
-      updatedAt: true,
-      noteId: true,
-    },
-    where: {
-      taskId: params.taskId,
-      note: {
-        authorId: user.id,
-      },
-    },
-  });
-
-  if (!task) {
+  const res = await getTask(user.id, params.taskId);
+  if (!res) {
     notFound();
   }
-
-  return Response.json(getTaskResponseSchema.parse({ data: task }));
+  return Response.json(res);
 };
 
 export const PUT = async (

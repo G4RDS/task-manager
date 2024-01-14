@@ -1,4 +1,5 @@
 import { UndefinedInitialDataOptions } from '@tanstack/react-query';
+import { getTasksForNoteResponseSchema } from '../app/api/notes/[noteId]/tasks/type';
 import { getTaskResponseSchema } from '../app/api/tasks/[taskId]/type';
 import { getTasksResponseSchema } from '../app/api/tasks/type';
 
@@ -16,10 +17,20 @@ export const queries = {
       queryFn: async () =>
         fetch('/api/tasks').then(async (res) => {
           if (!res.ok) {
-            // TODO: Handle error
             throw new Error('Failed to fetch');
           }
           return getTasksResponseSchema.parse(await res.json()).data;
+        }),
+    }) as const,
+  getTasksForNote: (noteId: string) =>
+    ({
+      queryKey: ['getTasksForNote', noteId],
+      queryFn: async () =>
+        fetch(`/api/notes/${noteId}/tasks`).then(async (res) => {
+          if (!res.ok) {
+            throw new Error('Failed to fetch');
+          }
+          return getTasksForNoteResponseSchema.parse(await res.json()).data;
         }),
     }) as const,
   getTask: (taskId: string) => ({

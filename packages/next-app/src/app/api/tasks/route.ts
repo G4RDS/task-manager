@@ -2,7 +2,8 @@ import { NextRequest } from 'next/server';
 import { prisma } from 'database';
 import { generateKeyBetween } from 'fractional-indexing';
 import { getUser } from '../../../utils/nextAuth';
-import { getTasksResponseSchema, postTaskRequestSchema } from './type';
+import { getTasks } from './query';
+import { postTaskRequestSchema } from './type';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,34 +13,7 @@ export const GET = async () => {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const tasks = await prisma.task.findMany({
-    select: {
-      taskId: true,
-      title: true,
-      status: true,
-      order: true,
-      createdAt: true,
-      updatedAt: true,
-      note: {
-        select: {
-          noteId: true,
-          title: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-    },
-    where: {
-      note: {
-        authorId: user.id,
-      },
-    },
-    orderBy: {
-      order: 'asc',
-    },
-  });
-
-  return Response.json(getTasksResponseSchema.parse({ data: tasks }));
+  return Response.json(await getTasks(user.id));
 };
 
 export const POST = async (req: NextRequest) => {
