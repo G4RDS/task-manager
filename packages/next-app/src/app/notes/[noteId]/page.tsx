@@ -1,11 +1,18 @@
 import { notFound } from 'next/navigation';
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query';
 import { prisma } from 'database';
 import { css } from '../../../../styled-system/css';
 import { flex } from '../../../../styled-system/patterns';
 import { NoteIcon } from '../../../components/icons/NoteIcon';
 import { getUserOrThrow } from '../../../utils/nextAuth';
+import { queries } from '../../../utils/query';
 import { Header } from '../../_components/Header/Header';
 import { MainContents } from '../../_components/MainContents/MainContents';
+import { getTasksForNote } from '../../api/notes/[noteId]/tasks/query';
 import { CreateTaskForm } from './_components/CreateTaskForm/CreateTaskForm';
 import { NoteActionMenu } from './_components/NoteActionMenu/NoteActionMenu';
 import { NoteEditor } from './_components/NoteEditor/NoteEditor';
@@ -29,8 +36,15 @@ export default async function Page({ params }: { params: { noteId: string } }) {
     notFound();
   }
 
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: queries.getTasksForNote(params.noteId).queryKey,
+    queryFn: async () => (await getTasksForNote(user.id, params.noteId)).data,
+  });
+
   return (
-    <>
+    <HydrationBoundary state={dehydrate(queryClient)}>
       <Header
         titleEl={
           <ol
@@ -94,6 +108,6 @@ export default async function Page({ params }: { params: { noteId: string } }) {
           <TaskCardList noteId={params.noteId} />
         </div>
       </MainContents>
-    </>
+    </HydrationBoundary>
   );
 }

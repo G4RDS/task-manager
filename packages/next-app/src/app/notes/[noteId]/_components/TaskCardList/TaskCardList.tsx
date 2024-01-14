@@ -1,36 +1,23 @@
-import { prisma } from 'database';
+'use client';
+
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { flex } from '../../../../../../styled-system/patterns';
-import { getUserOrThrow } from '../../../../../utils/nextAuth';
-import { TaskCard } from './TaskCard';
+import { queries } from '../../../../../utils/query';
+import { TaskCard } from './../../../../../components/TaskCard';
 
 interface Props {
   noteId: string;
 }
-export const TaskCardList = async ({ noteId }: Props) => {
-  const user = await getUserOrThrow();
-
-  const tasks = await prisma.task.findMany({
-    select: {
-      taskId: true,
-      title: true,
-      status: true,
-    },
-    where: {
-      noteId,
-      note: {
-        authorId: user.id,
-      },
-    },
-    orderBy: {
-      updatedAt: 'desc',
-    },
+export const TaskCardList = ({ noteId }: Props) => {
+  const { data: tasks } = useSuspenseQuery({
+    ...queries.getTasksForNote(noteId),
   });
 
   return (
     <ul className={flex({ flexDir: 'column', gap: 3 })}>
       {tasks.map((task) => (
         <li key={task.taskId}>
-          <TaskCard task={task} />
+          <TaskCard task={{ ...task }} />
         </li>
       ))}
     </ul>
