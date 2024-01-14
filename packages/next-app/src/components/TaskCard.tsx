@@ -57,6 +57,9 @@ export const TaskCard = ({
       queryClient.invalidateQueries({
         queryKey: queries.getTasksForNote(task.noteId).queryKey,
       });
+      queryClient.invalidateQueries({
+        queryKey: queries.getTask(task.taskId).queryKey,
+      });
     },
   });
   const task = !isPending || !variables ? _task : variables?.newTask;

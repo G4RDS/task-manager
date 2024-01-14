@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { NextRequest } from 'next/server';
 import { prisma } from 'database';
 import { generateKeyBetween } from 'fractional-indexing';
@@ -53,6 +54,8 @@ export const POST = async (req: NextRequest) => {
       noteId: true,
     },
   });
+
+  revalidatePath('/');
 
   return Response.json({ data: task });
 };

@@ -5,11 +5,13 @@ import {
   PopoverPortal,
   PopoverTrigger,
 } from '@radix-ui/react-popover';
+import { useQueryClient } from '@tanstack/react-query';
 import { Editor, FloatingMenu } from '@tiptap/react';
 import { Command, CommandInput, CommandItem, CommandList } from 'cmdk';
 import { css } from '../../../styled-system/css';
 import { flex } from '../../../styled-system/patterns';
 import { PostTaskResponse } from '../../app/api/tasks/type';
+import { queries } from '../../utils/query';
 import { PlusIcon } from '../icons/PlusIcon';
 import { TaskIcon } from '../icons/TaskIcon';
 
@@ -21,6 +23,25 @@ export const CustomFloatingMenu = ({
   noteId: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const onSelectNewTask = async () => {
+    setIsOpen(false);
+    const response = await fetch('/api/tasks', {
+      method: 'POST',
+      body: JSON.stringify({
+        noteId,
+      }),
+    });
+    const task = (await response.json()) as PostTaskResponse;
+    queryClient.invalidateQueries({
+      queryKey: queries.getTasks().queryKey,
+    });
+    queryClient.invalidateQueries({
+      queryKey: queries.getTasksForNote(task.data.noteId).queryKey,
+    });
+    editor.commands.setTaskCard(task.data.taskId);
+  };
 
   return (
     <FloatingMenu editor={editor}>
@@ -81,17 +102,7 @@ export const CustomFloatingMenu = ({
                   })}
                 >
                   <CommandItem
-                    onSelect={async () => {
-                      setIsOpen(false);
-                      const response = await fetch('/api/tasks', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                          noteId,
-                        }),
-                      });
-                      const task = (await response.json()) as PostTaskResponse;
-                      editor.commands.setTaskCard(task.data.taskId);
-                    }}
+                    onSelect={onSelectNewTask}
                     className={flex({
                       alignItems: 'center',
                       h: 8,

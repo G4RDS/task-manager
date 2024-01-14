@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
 import { NextRequest } from 'next/server';
 import { prisma } from 'database';
@@ -65,6 +66,8 @@ export const PUT = async (
       taskId: params.taskId,
     },
   });
+
+  revalidatePath('/');
 
   return Response.json({ data: task });
 };
