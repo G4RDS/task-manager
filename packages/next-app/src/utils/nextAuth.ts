@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { User } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from 'database';
@@ -29,10 +29,10 @@ export const getUser = async () => {
     return undefined;
   }
   const user = session.user;
-  if (!user) {
+  if (!user || !user.id) {
     return undefined;
   }
-  return user;
+  return user as User & { id: string };
 };
 
 export const getUserOrThrow = async () => {
