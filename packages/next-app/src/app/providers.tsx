@@ -2,7 +2,8 @@
 
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
-import { ReactNode, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { ReactNode, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NotFoundError } from '../utils/query';
 
@@ -18,7 +19,7 @@ export default function Providers({
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000,
+            staleTime: Infinity,
             retry: (failureCount, error) => {
               if (error instanceof NotFoundError) {
                 return false;
@@ -29,6 +30,12 @@ export default function Providers({
         },
       }),
   );
+
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    queryClient.invalidateQueries();
+  }, [pathname, queryClient, searchParams]);
 
   return (
     <QueryClientProvider client={queryClient}>
