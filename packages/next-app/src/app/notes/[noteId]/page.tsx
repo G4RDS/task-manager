@@ -1,18 +1,15 @@
 import { notFound } from 'next/navigation';
-import {
-  HydrationBoundary,
-  QueryClient,
-  dehydrate,
-} from '@tanstack/react-query';
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { prisma } from 'database';
 import { css } from '../../../../styled-system/css';
 import { flex } from '../../../../styled-system/patterns';
 import { NoteIcon } from '../../../components/icons/NoteIcon';
 import { getUserOrThrow } from '../../../utils/nextAuth';
-import { queries } from '../../../utils/query';
+import { createQueryClient, queries } from '../../../utils/query';
 import { Header } from '../../_components/Header/Header';
 import { MainContents } from '../../_components/MainContents/MainContents';
 import { getTasksForNote } from '../../api/notes/[noteId]/tasks/query';
+import { getTask } from '../../api/tasks/[taskId]/query';
 import { NoteActionMenu } from './_components/NoteActionMenu/NoteActionMenu';
 import { NoteEditor } from './_components/NoteEditor/NoteEditor';
 
@@ -34,12 +31,35 @@ export default async function Page({ params }: { params: { noteId: string } }) {
     notFound();
   }
 
-  const queryClient = new QueryClient();
+  const queryClient = createQueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: queries.getTasksForNote(params.noteId).queryKey,
-    queryFn: async () => (await getTasksForNote(user.id, params.noteId)).data,
+  const taskIds = await prisma.task.findMany({
+    select: {
+      taskId: true,
+    },
+    where: {
+      noteId: params.noteId,
+    },
   });
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: queries.getTasksForNote(params.noteId).queryKey,
+      queryFn: async () => (await getTasksForNote(user.id, params.noteId)).data,
+    }),
+    ...taskIds.map(({ taskId }) =>
+      queryClient.prefetchQuery({
+        queryKey: queries.getTask(taskId).queryKey,
+        queryFn: async () => {
+          const task = await getTask(user.id, taskId);
+          if (!task) {
+            throw new Error('Task not found');
+          }
+          return task.data;
+        },
+      }),
+    ),
+  ]);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
