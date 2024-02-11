@@ -124,7 +124,10 @@ export const TaskCard = ({
           })}
         >
           {titleDocExtensions && isReady && (
-            <TitleEditor extensions={titleDocExtensions} />
+            <TitleEditor
+              extensions={titleDocExtensions}
+              initialTitle={task.title}
+            />
           )}
         </div>
         <div
@@ -323,7 +326,13 @@ const ActionMenu = ({ taskId }: { taskId: string }) => {
   );
 };
 
-const TitleEditor = ({ extensions }: { extensions: Extensions }) => {
+const TitleEditor = ({
+  extensions,
+  initialTitle,
+}: {
+  extensions: Extensions;
+  initialTitle: string;
+}) => {
   const editor = useEditor({
     extensions,
     editorProps: {
@@ -332,6 +341,13 @@ const TitleEditor = ({ extensions }: { extensions: Extensions }) => {
       },
     },
   });
+
+  useEffect(() => {
+    if (!editor?.isEmpty) {
+      return;
+    }
+    editor.commands.insertContent(initialTitle);
+  }, [editor, initialTitle]);
 
   if (!editor) {
     return null;
