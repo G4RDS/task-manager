@@ -45,6 +45,7 @@ export const NoteEditor = ({
           flex({
             flexDir: 'column',
             minH: '100vh',
+            p: '48px',
           }),
           className,
         )}
@@ -134,13 +135,13 @@ const NoteEditorInner = ({
   }
 
   return (
-    <div className={cx(flex({ flexDir: 'column' }), className)}>
+    <div className={cx(flex({ flexDir: 'column', minH: '100%' }), className)}>
       <EditorContent
         className={css({
           flex: '0 0 auto',
           position: 'relative',
           w: '100%',
-          pl: '2px',
+          p: '48px 48px 0',
           fontSize: '40px',
           fontWeight: 'bold',
           lineHeight: '1.2',
@@ -164,7 +165,7 @@ const NoteEditorInner = ({
           flex: '1',
           flexDir: 'column',
           w: '100%',
-          pt: 4,
+          p: '16px 48px 48px',
           fontSize: '16px',
           lineHeight: '1.5',
           color: 'gray.800',

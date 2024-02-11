@@ -85,11 +85,7 @@ export default async function Page({ params }: { params: { noteId: string } }) {
         }
         actionsEl={<NoteActionMenu noteId={params.noteId} />}
       />
-      <MainContents
-        className={css({
-          p: '48px',
-        })}
-      >
+      <MainContents>
         <NoteEditor noteId={params.noteId} />
       </MainContents>
     </HydrationBoundary>
