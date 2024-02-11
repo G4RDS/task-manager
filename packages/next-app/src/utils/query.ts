@@ -1,4 +1,7 @@
-import { UndefinedInitialDataOptions } from '@tanstack/react-query';
+import {
+  QueryClient,
+  UndefinedInitialDataOptions,
+} from '@tanstack/react-query';
 import { getTasksForNoteResponseSchema } from '../app/api/notes/[noteId]/tasks/type';
 import { getTaskResponseSchema } from '../app/api/tasks/[taskId]/type';
 import { getTasksResponseSchema } from '../app/api/tasks/type';
@@ -50,3 +53,19 @@ export const queries = {
   string,
   (...args: never[]) => UndefinedInitialDataOptions
 >;
+
+export const createQueryClient = () => {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+        retry: (failureCount, error) => {
+          if (error instanceof NotFoundError) {
+            return false;
+          }
+          return failureCount < 3;
+        },
+      },
+    },
+  });
+};

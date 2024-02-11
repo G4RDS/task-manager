@@ -1,10 +1,6 @@
-import {
-  HydrationBoundary,
-  QueryClient,
-  dehydrate,
-} from '@tanstack/react-query';
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import { getUserOrThrow } from '../../utils/nextAuth';
-import { queries } from '../../utils/query';
+import { createQueryClient, queries } from '../../utils/query';
 import { Header } from '../_components/Header/Header';
 import { MainContents } from '../_components/MainContents/MainContents';
 import { getTasks } from '../api/tasks/query';
@@ -14,7 +10,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   const user = await getUserOrThrow();
-  const queryClient = new QueryClient();
+  const queryClient = createQueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: queries.getTasks().queryKey,

@@ -2,10 +2,10 @@
 
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { ReactNode, useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { NotFoundError } from '../utils/query';
+import { usePathname } from 'next/navigation';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { createQueryClient } from '../utils/query';
 
 export default function Providers({
   session,
@@ -14,28 +14,17 @@ export default function Providers({
   session: Session | null;
   children: ReactNode;
 }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: Infinity,
-            retry: (failureCount, error) => {
-              if (error instanceof NotFoundError) {
-                return false;
-              }
-              return failureCount < 3;
-            },
-          },
-        },
-      }),
-  );
+  const [queryClient] = useState(() => createQueryClient());
 
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const prevPathname = useRef(pathname);
   useEffect(() => {
+    if (prevPathname.current === pathname) {
+      return;
+    }
+    prevPathname.current = pathname;
     queryClient.invalidateQueries();
-  }, [pathname, queryClient, searchParams]);
+  }, [pathname, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
