@@ -1,6 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from 'database';
-import { generateKeyBetween } from 'fractional-indexing';
+import { generateKeyBetween } from '../utils/order';
 
 export const createTask = async (
   userId: string,
