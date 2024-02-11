@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "dotenv": "^16.3.1",
-    "esbuild": "^0.19.11",
+    "esbuild": "^0.20.0",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
     "tsconfig": "^1.0.0",
