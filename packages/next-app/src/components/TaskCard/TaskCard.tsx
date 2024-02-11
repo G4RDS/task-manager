@@ -102,6 +102,9 @@ export const TaskCard = ({
         '&:has([data-editor="true"]:focus)': {
           outline: '2px solid token(colors.primary.500)',
         },
+        '.ProseMirror-focused .ProseMirror-selectednode &': {
+          outline: '2px solid token(colors.primary.500)',
+        },
       })}
     >
       <div
