@@ -13,10 +13,8 @@ import { queries } from '../../../utils/query';
 import { Header } from '../../_components/Header/Header';
 import { MainContents } from '../../_components/MainContents/MainContents';
 import { getTasksForNote } from '../../api/notes/[noteId]/tasks/query';
-import { CreateTaskForm } from './_components/CreateTaskForm/CreateTaskForm';
 import { NoteActionMenu } from './_components/NoteActionMenu/NoteActionMenu';
 import { NoteEditor } from './_components/NoteEditor/NoteEditor';
-import { TaskCardList } from './_components/TaskCardList/TaskCardList';
 
 export const dynamic = 'force-dynamic';
 
@@ -93,20 +91,6 @@ export default async function Page({ params }: { params: { noteId: string } }) {
         })}
       >
         <NoteEditor noteId={params.noteId} />
-        <div
-          className={css({
-            mt: 4,
-          })}
-        >
-          <CreateTaskForm noteId={params.noteId} />
-        </div>
-        <div
-          className={css({
-            mt: 3,
-          })}
-        >
-          <TaskCardList noteId={params.noteId} />
-        </div>
       </MainContents>
     </HydrationBoundary>
   );
