@@ -20,6 +20,7 @@ import { TaskStatus } from 'database';
 import { css } from '../../../styled-system/css';
 import { flex } from '../../../styled-system/patterns';
 import { GetTaskResponse } from '../../app/api/tasks/[taskId]/type';
+import { useDebounceCallback } from '../../hooks/useDebounceCallback';
 import { queries } from '../../utils/query';
 import { uiByTaskStatus } from '../../utils/taskStatus';
 import { createTaskDocConnection } from '../../utils/tiptap';
@@ -87,9 +88,17 @@ export const TaskCard = ({
     };
   }, [task.noteId, task.taskId]);
 
-  const onChangeStatus = async (status: TaskStatus) => {
+  const onChangeStatus = (status: TaskStatus) => {
     mutateTask({ newTask: { ...task, status } });
   };
+
+  const onChangeTitle = useDebounceCallback(
+    (title: string) => {
+      mutateTask({ newTask: { ...task, title } });
+    },
+    [mutateTask, task],
+    500,
+  );
 
   return (
     <div
@@ -130,6 +139,7 @@ export const TaskCard = ({
             <TitleEditor
               extensions={titleDocExtensions}
               initialTitle={task.title}
+              onChange={onChangeTitle}
             />
           )}
         </div>
@@ -332,9 +342,11 @@ const ActionMenu = ({ taskId }: { taskId: string }) => {
 const TitleEditor = ({
   extensions,
   initialTitle,
+  onChange,
 }: {
   extensions: Extensions;
   initialTitle: string;
+  onChange: (value: string) => void;
 }) => {
   const editor = useEditor({
     extensions,
@@ -342,6 +354,9 @@ const TitleEditor = ({
       attributes: {
         class: 'taskTitleEditor',
       },
+    },
+    onUpdate: ({ editor }) => {
+      onChange(editor.getText());
     },
   });
 
