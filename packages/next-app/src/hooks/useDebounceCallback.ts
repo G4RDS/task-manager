@@ -19,9 +19,9 @@ export const useDebounceCallback = <T extends unknown[]>(
     if (lastCnt.current === cnt) {
       return;
     }
-    lastCnt.current = cnt;
 
     const timeout = setTimeout(() => {
+      lastCnt.current = cnt;
       if (!nextArgs.current) {
         return;
       }

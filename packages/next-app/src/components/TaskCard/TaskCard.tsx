@@ -94,6 +94,9 @@ export const TaskCard = ({
 
   const onChangeTitle = useDebounceCallback(
     (title: string) => {
+      if (title === task.title) {
+        return;
+      }
       mutateTask({ newTask: { ...task, title } });
     },
     [mutateTask, task],
